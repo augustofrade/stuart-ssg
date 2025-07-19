@@ -1,0 +1,34 @@
+{
+  "name": "stuart-ssg",
+  "version": "0.0.1",
+  "description": "Stuart Static Site Generator",
+  "scripts": {
+    "setup": "npm install && tsc && npm i -g"
+  },
+  "bin": {
+    "stuart": "./bin/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/augustofrade/stuart-ssg.git"
+  },
+  "keywords": [
+    "stuart",
+    "ssg",
+    "static",
+    "site",
+    "generator",
+    "cli",
+    "http"
+  ],
+  "author": "Augusto Frade",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/augustofrade/stuart-ssg/issues"
+  },
+  "homepage": "https://github.com/augustofrade/stuart-ssg#readme",
+  "devDependencies": {
+    "prettier": "3.6.2",
+    "ts-node": "^10.9.2"
+  }
+}
