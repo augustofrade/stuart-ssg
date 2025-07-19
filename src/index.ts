@@ -14,16 +14,19 @@ yargs(hideBin(process.argv))
           describe: "Name of the new project",
           type: "string",
         })
-        .positional("directory", {
+        .option("directory", {
+          alias: "d",
           describe: "Directory to create the project in. Defaults to current directory.",
           type: "string",
         })
         .option("blueprint", {
+          alias: "b",
           describe: "Blueprint to be used to create the new project",
           type: "string",
           default: "default",
         })
         .option("theme", {
+          alias: "t",
           describe: "Theme to be set on the new project",
           type: "string",
           default: "stuart",
