@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Stuart Static Site Generator",
   "scripts": {
+    "ts": "ts-node src/index.ts",
     "setup": "npm install && tsc && npm i -g"
   },
   "bin": {
