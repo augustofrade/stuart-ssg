@@ -11,12 +11,18 @@ export default class StuartProjectCreate {
   public async handle(): Promise<StuartProject | null> {
     const { projectName, projectDirectory, theme } = this.options;
 
+    // TODO: create blueprint usage
     try {
       await this.createProjectDirectory();
       this.logger.logInfo(`Creating project directory at ${projectDirectory}`);
 
       await this.createIndexFile();
       this.logger.logInfo(`Created index file in ${projectDirectory}/pages`);
+
+      await this.createConfigFile();
+      this.logger.logInfo(`Created configuration file at ${projectDirectory}/stuart.conf`);
+
+      // TODO: copy theme folder
     } catch (error) {
       this.logger.logError(`Failed to create project:\n${(error as Error).message}`);
       fs.rm(projectDirectory, { recursive: true }).catch(() => {});
@@ -37,5 +43,14 @@ export default class StuartProjectCreate {
       path.join(__dirname, "../templates", "index.md"),
       path.join(projectDirectory, "pages", "index.md")
     );
+  }
+
+  private async createConfigFile(): Promise<void> {
+    const { projectName, projectDirectory, theme } = this.options;
+
+    let config = await fs.readFile(path.join(__dirname, "../templates", "stuart.conf"), "utf8");
+    config = config.replace("PROJECT_NAME", projectName).replace("THEME", theme);
+
+    await fs.writeFile(path.join(projectDirectory, "stuart.conf"), config, "utf8");
   }
 }
