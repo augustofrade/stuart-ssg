@@ -22,7 +22,7 @@ export default async function newCommand(args: ArgumentsCamelCase<NewCommandArgs
     projectName,
     projectDirectory,
     blueprint: args.blueprint,
-    theme: "stuart",
+    theme: args.theme,
   });
 
   if (!success) {
