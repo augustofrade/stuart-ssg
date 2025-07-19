@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { existsSync } from "fs";
 import fs from "fs/promises";
 import path from "path";
-import ConfigFile from "../../../helpers/ConfigFile";
+import ConfigFile, { Config } from "../../../helpers/ConfigFile";
 import BobLogger from "../../BobLogger";
 import { CreateStuartProjectOptions } from "../types";
 
@@ -14,22 +14,17 @@ export default class StuartProjectCreate {
   public constructor(private readonly options: CreateStuartProjectOptions) {}
 
   public async handle(): Promise<boolean> {
-    const { projectDirectory } = this.options;
+    const { projectDirectory, theme, blueprint } = this.options;
 
     try {
       await this.createProjectDirectory();
       this.logger.logInfo(`Creating project directory at ${projectDirectory}`);
 
-      await this.verifyAndCopyTheme();
-      this.logger.logInfo(`Set theme to ${chalk.blue(this.options.theme)}`);
+      await this.useBlueprint();
+      this.logger.logInfo(`Using blueprint ${chalk.blue(blueprint)}`);
 
-      await this.createIndexFile();
-      this.logger.logInfo(`Created index file in ${projectDirectory}/pages`);
-
-      await this.createConfigFile();
-      this.logger.logInfo(`Created configuration file at ${projectDirectory}/stuart.conf`);
-
-      // TODO: copy theme folder
+      await this.useTheme();
+      this.logger.logInfo(`Set theme to ${chalk.blue(theme)}`);
     } catch (error) {
       this.logger.logError(`Failed to create project:\n${(error as Error).message}`);
       fs.rm(projectDirectory, { recursive: true }).catch(() => {});
@@ -43,54 +38,65 @@ export default class StuartProjectCreate {
     await fs.mkdir(path.join(this.options.projectDirectory, "pages"), { recursive: true });
   }
 
-  private async createIndexFile(): Promise<void> {
-    const { projectDirectory } = this.options;
-    const blueprintPath = this.getBlueprintPath(this.options.blueprint);
+  private async useBlueprint(): Promise<void> {
+    const { projectDirectory, blueprint, projectName, theme } = this.options;
+    this.logger.logDebug(`Verifying "${blueprint}" blueprint...`);
 
-    await fs.copyFile(
-      path.join(blueprintPath, "index.md"),
-      path.join(projectDirectory, "pages", "index.md")
-    );
-  }
+    const blueprintPath = path.join(this.BLUEPRINTS_DIR, blueprint);
 
-  private async createConfigFile(): Promise<void> {
-    const { projectName, projectDirectory, theme } = this.options;
-    const blueprintPath = this.getBlueprintPath(this.options.blueprint);
+    const blueprintConf = await this.getConfigFile("blueprint", blueprint, blueprintPath);
+    if (typeof blueprintConf?.project_definition?.project_name !== "string") {
+      throw new Error(`Invalid blueprint configuration found in ${blueprintPath}`);
+    }
+
+    const destinationPath = path.join(projectDirectory, "pages", "index.html");
+
+    this.logger.logDebug(`Copying blueprint files to ${destinationPath}...`);
+    await fs.cp(blueprintPath, destinationPath, { recursive: true });
 
     let config = await fs.readFile(path.join(blueprintPath, "stuart.conf"), "utf8");
-    config = config.replace("PROJECT_NAME", projectName).replace("THEME", theme);
 
+    this.logger.logDebug(`Replacing blueprint placeholders in stuart.conf...`);
+    config = config.replace("%PROJECT_NAME%", projectName).replace("%THEME%", theme);
     await fs.writeFile(path.join(projectDirectory, "stuart.conf"), config, "utf8");
   }
 
-  private async verifyAndCopyTheme(): Promise<void> {
+  private async useTheme(): Promise<void> {
     const { theme } = this.options;
 
-    this.logger.logDebug(`Verifying "${theme}" theme existence...`);
+    this.logger.logDebug(`Verifying "${theme}" theme...`);
 
     const themePath = path.join(this.THEMES_DIR, theme.toLocaleLowerCase());
-    if (existsSync(themePath) === false) {
-      throw new Error(`Theme ${theme} does not exist at ${themePath}`);
-    }
 
-    const themeConf = await ConfigFile.read(path.join(themePath, "theme.conf"));
+    const themeConf = await this.getConfigFile("theme", theme, themePath);
     if (typeof themeConf?.theme_definition?.name !== "string") {
-      throw new Error(`Invalid theme configuration in ${themePath}`);
+      throw new Error(`Invalid theme configuration found in ${themePath}`);
     }
 
-    this.logger.logDebug(`Copying theme ${theme} from ${themePath}`);
-    const destination = path.join(
+    const destinationPath = path.join(
       this.options.projectDirectory,
       "themes",
       theme.toLocaleLowerCase()
     );
-    await fs.mkdir(destination, { recursive: true });
-    await fs.cp(themePath, destination, {
+
+    this.logger.logDebug(`Copying theme files to ${destinationPath}`);
+    await fs.mkdir(destinationPath, { recursive: true });
+    await fs.cp(themePath, destinationPath, {
       recursive: true,
     });
   }
 
-  private getBlueprintPath(blueprint: string): string {
-    return path.join(this.BLUEPRINTS_DIR, blueprint);
+  private async getConfigFile(
+    component: "blueprint" | "theme",
+    componentName: string,
+    componentPath: string
+  ): Promise<Config> {
+    if (existsSync(componentPath) === false) {
+      throw new Error(`${component} ${componentName} does not exist`);
+    }
+
+    const file = component === "blueprint" ? "stuart.conf" : "theme.conf";
+    const config = await ConfigFile.read(path.join(componentPath, file));
+    return config;
   }
 }
