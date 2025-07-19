@@ -1,9 +1,10 @@
 import fs from "fs/promises";
+import { StuartProjectConfig } from "../core/StuartProject";
 
 export default class ConfigFile {
   private constructor() {}
 
-  public static async read(filePath: string): Promise<Record<string, any>> {
+  public static async read(filePath: string): Promise<StuartProjectConfig> {
     const data = (await fs.readFile(filePath, "utf-8")).split("\n");
     const config: Record<string, Record<string, string | number | boolean>> = {};
     let currentSection = "";
@@ -35,7 +36,7 @@ export default class ConfigFile {
       config[currentSection][key] = value;
     }
 
-    return config;
+    return config as StuartProjectConfig;
   }
 
   public static async write(filePath: string, config: Record<string, any>): Promise<void> {
