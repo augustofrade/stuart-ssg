@@ -16,17 +16,19 @@ export default async function newCommand(args: ArgumentsCamelCase<NewCommandArgs
     ? getAbsolutePath(args.directory)
     : getAbsolutePath(sanitizeDirName(projectName));
 
-  const project = await StuartProjectManager.create({
+  const success = await StuartProjectManager.create({
     projectName,
     projectDirectory,
     theme: "stuart",
   });
 
-  if (!project) {
+  if (!success) {
     return console.log(chalk.red("Failed to create project."));
   }
 
-  console.log(chalk.green(`Project "${projectName}" created successfully!`));
+  console.log(chalk.green(`\nProject "${projectName}" created successfully!`));
+  console.log(`\nRun your new project by running the following commands:`);
+  console.log(chalk.blue("cd " + projectDirectory + "\nstuart dev"));
 }
 
 function getProjectName(args: ArgumentsCamelCase<NewCommandArgs>): Promise<string> {

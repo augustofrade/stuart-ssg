@@ -1,6 +1,5 @@
 import fs from "fs/promises";
 import path from "path";
-import StuartProject from "..";
 import BobLogger from "../../BobLogger";
 import { CreateStuartProjectOptions } from "../types";
 
@@ -8,7 +7,7 @@ export default class StuartProjectCreate {
   private readonly logger = BobLogger.Instance;
   public constructor(private readonly options: CreateStuartProjectOptions) {}
 
-  public async handle(): Promise<StuartProject | null> {
+  public async handle(): Promise<boolean> {
     const { projectName, projectDirectory, theme } = this.options;
 
     // TODO: create blueprint usage
@@ -26,10 +25,10 @@ export default class StuartProjectCreate {
     } catch (error) {
       this.logger.logError(`Failed to create project:\n${(error as Error).message}`);
       fs.rm(projectDirectory, { recursive: true }).catch(() => {});
-      return null;
+      return true;
     }
 
-    return new StuartProject(projectName, projectDirectory, theme);
+    return true;
   }
 
   private async createProjectDirectory(): Promise<any> {
@@ -37,7 +36,7 @@ export default class StuartProjectCreate {
   }
 
   private async createIndexFile(): Promise<void> {
-    const { projectName, projectDirectory } = this.options;
+    const { projectDirectory } = this.options;
 
     return fs.copyFile(
       path.join(__dirname, "../templates", "index.md"),
