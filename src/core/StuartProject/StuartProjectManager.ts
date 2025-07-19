@@ -4,6 +4,6 @@ import { CreateStuartProjectOptions } from "./types";
 
 export default class StuartProjectManager {
   public static async create(options: CreateStuartProjectOptions): Promise<StuartProject | null> {
-    return StuartProjectCreate.handle(options);
+    return new StuartProjectCreate(options).handle();
   }
 }
