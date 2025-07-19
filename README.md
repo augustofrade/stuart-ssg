@@ -6,9 +6,9 @@ Stuart is a Static Site Generator that converts markdown documents into a fully-
 
 ## Progress
 
-[ ] Markdown Parser
-[ ] CLI
-[ ] Server with hot reload
-[ ] Scaffolding
-[ ] Configuration
-[ ] Theming Support
+- [ ] Markdown Parser
+- [ ] CLI
+- [ ] Server with hot reload
+- [ ] Scaffolding
+- [ ] Configuration
+- [ ] Theming Support
