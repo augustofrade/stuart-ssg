@@ -8,6 +8,8 @@ import sanitizeDirName from "../helpers/sanitize-dir-name";
 interface NewCommandArgs {
   project_name?: string;
   directory?: string;
+  blueprint: string;
+  theme: string;
 }
 
 export default async function newCommand(args: ArgumentsCamelCase<NewCommandArgs>) {
@@ -19,6 +21,7 @@ export default async function newCommand(args: ArgumentsCamelCase<NewCommandArgs
   const success = await StuartProjectManager.create({
     projectName,
     projectDirectory,
+    blueprint: args.blueprint,
     theme: "stuart",
   });
 

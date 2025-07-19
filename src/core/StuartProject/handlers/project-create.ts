@@ -5,12 +5,13 @@ import { CreateStuartProjectOptions } from "../types";
 
 export default class StuartProjectCreate {
   private readonly logger = BobLogger.Instance;
+  private readonly BLUEPRINTS_DIR = path.join(__dirname, "../../../../blueprints");
+
   public constructor(private readonly options: CreateStuartProjectOptions) {}
 
   public async handle(): Promise<boolean> {
-    const { projectName, projectDirectory, theme } = this.options;
+    const { projectDirectory } = this.options;
 
-    // TODO: create blueprint usage
     try {
       await this.createProjectDirectory();
       this.logger.logInfo(`Creating project directory at ${projectDirectory}`);
@@ -24,8 +25,8 @@ export default class StuartProjectCreate {
       // TODO: copy theme folder
     } catch (error) {
       this.logger.logError(`Failed to create project:\n${(error as Error).message}`);
-      fs.rm(projectDirectory, { recursive: true }).catch(() => {});
-      return true;
+      // fs.rm(projectDirectory, { recursive: true }).catch(() => {});
+      return false;
     }
 
     return true;
@@ -37,19 +38,25 @@ export default class StuartProjectCreate {
 
   private async createIndexFile(): Promise<void> {
     const { projectDirectory } = this.options;
+    const blueprintPath = this.getBlueprintPath(this.options.blueprint);
 
     return fs.copyFile(
-      path.join(__dirname, "../templates", "index.md"),
+      path.join(blueprintPath, "index.md"),
       path.join(projectDirectory, "pages", "index.md")
     );
   }
 
   private async createConfigFile(): Promise<void> {
     const { projectName, projectDirectory, theme } = this.options;
+    const blueprintPath = this.getBlueprintPath(this.options.blueprint);
 
-    let config = await fs.readFile(path.join(__dirname, "../templates", "stuart.conf"), "utf8");
+    let config = await fs.readFile(path.join(blueprintPath, "stuart.conf"), "utf8");
     config = config.replace("PROJECT_NAME", projectName).replace("THEME", theme);
 
     await fs.writeFile(path.join(projectDirectory, "stuart.conf"), config, "utf8");
+  }
+
+  private getBlueprintPath(blueprint: string): string {
+    return path.join(this.BLUEPRINTS_DIR, blueprint);
   }
 }
