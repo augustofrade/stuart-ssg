@@ -7,9 +7,9 @@ import BobLogger from "../../BobLogger";
 import { CreateStuartProjectOptions } from "../types";
 
 export default class StuartProjectCreate {
-  private readonly logger = BobLogger.Instance.setLogLevel(2);
-  private readonly BLUEPRINTS_DIR = path.join(__dirname, "../../../../blueprints");
-  private readonly THEMES_DIR = path.join(__dirname, "../../../../themes");
+  private readonly logger = BobLogger.Instance;
+  private readonly BLUEPRINTS_DIR = path.join(__dirname, "../../../../stuart-data/blueprints");
+  private readonly THEMES_DIR = path.join(__dirname, "../../../../stuart-data/themes");
 
   public constructor(private readonly options: CreateStuartProjectOptions) {}
 
