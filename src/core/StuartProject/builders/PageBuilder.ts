@@ -51,6 +51,8 @@ export default class StuartPageBuilder {
       throw new Error("Page is not loaded. Call loadPage() first.");
     }
 
+    this.page.injectProps((StuartProject.Instance.configs?.project_definition ?? {}) as any);
+
     // TODO: improve this and standardize config records across the project
     const pageProps = (this.page.configs?.page_definition ?? {}) as unknown as Record<
       string,
@@ -59,7 +61,6 @@ export default class StuartPageBuilder {
     this.page.injectProps(pageProps);
     StuartPageBuilder.logger.logVerbose(`Building theme with props: ${JSON.stringify(pageProps)}`);
 
-    this.page.injectProps((StuartProject.Instance.configs?.project_definition ?? {}) as any);
     this.page.injectProps((StuartProject.Instance.configs?.props ?? {}) as any);
 
     console.log(this.page.content);
