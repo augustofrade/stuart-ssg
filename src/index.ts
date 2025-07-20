@@ -2,6 +2,7 @@
 
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import buildCommand from "./commands/build.command";
 import newCommand from "./commands/new.command";
 
 yargs(hideBin(process.argv))
@@ -35,6 +36,24 @@ yargs(hideBin(process.argv))
         });
     },
     newCommand
+  )
+  .command(
+    "build [project_directory]",
+    "Build a Stuart project",
+    (yargs) => {
+      return yargs
+        .positional("project_directory", {
+          describe: "Directory of the project to build. Defaults to current directory.",
+          type: "string",
+        })
+        .option("output", {
+          alias: "o",
+          describe: "Output directory for the build files. Defaults to 'dist'.",
+          type: "string",
+          default: "dist",
+        });
+    },
+    buildCommand
   )
   .version(true)
   .help(true).argv;
