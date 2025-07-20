@@ -26,7 +26,7 @@ export default class StuartProjectManager {
   }
 
   private static async buildPage(fullPagePath: string): Promise<string> {
-    const pageBuilder = await new StuartPageBuilder().loadPage(fullPagePath);
+    const pageBuilder = await new StuartPageBuilder(fullPagePath).loadPage();
     await pageBuilder.parseMarkdown();
     return pageBuilder.injectTheme().build();
   }

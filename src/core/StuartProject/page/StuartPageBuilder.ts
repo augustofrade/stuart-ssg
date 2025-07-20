@@ -19,17 +19,15 @@ export default class StuartPageBuilder {
   private static readonly logger = BobLogger.Instance;
   private static parseMethod = (string: string) => marked(string, { async: true });
 
-  public constructor() {}
+  public constructor(private readonly absolutePagePath: string) {}
 
   /**
-   * Loads a page from the given file path.
+   * Loads the page corresponding to the file path passed into through the constructor.
    *
    * **Allows for chaining**
-   *
-   * @param fullPagePath - The absolute path to the page file.
    */
-  public async loadPage(fullPagePath: string): Promise<this> {
-    const pageContent = await fs.readFile(fullPagePath, "utf-8");
+  public async loadPage(): Promise<this> {
+    const pageContent = await fs.readFile(this.absolutePagePath, "utf-8");
     this.page = new StuartPage(pageContent);
 
     return this;
