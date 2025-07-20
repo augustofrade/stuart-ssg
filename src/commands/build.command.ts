@@ -24,7 +24,7 @@ export default async function buildCommand(args: ArgumentsCamelCase<BuildCommand
   }
 
   const index = path.join(projectDirectory, "pages", "index.md");
-  StuartProjectManager.buildPage(index);
+  console.log(await StuartProjectManager.buildSinglePage(index));
 
   logger.logInfo(`Building project in directory: ${projectDirectory}`);
   logger.logInfo(`Output will be saved to: ${outputDirectory}`);

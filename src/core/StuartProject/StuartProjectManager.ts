@@ -20,10 +20,14 @@ export default class StuartProjectManager {
     }
   }
 
-  public static async buildPage(fullPagePath: string): Promise<void> {
+  public static async buildSinglePage(fullPagePath: string): Promise<string> {
     await ThemeBuilder.Instance.loadCurrentTheme();
+    return StuartProjectManager.buildPage(fullPagePath);
+  }
+
+  private static async buildPage(fullPagePath: string): Promise<string> {
     const pageBuilder = await new StuartPageBuilder().loadPage(fullPagePath);
     await pageBuilder.parseMarkdown();
-    pageBuilder.injectTheme().build();
+    return pageBuilder.injectTheme().build();
   }
 }
