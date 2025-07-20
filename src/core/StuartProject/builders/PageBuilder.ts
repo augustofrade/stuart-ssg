@@ -46,7 +46,7 @@ export default class StuartPageBuilder {
     return this;
   }
 
-  public async build() {
+  public build(): string {
     if (!this.page) {
       throw new Error("Page is not loaded. Call loadPage() first.");
     }
@@ -63,6 +63,8 @@ export default class StuartPageBuilder {
 
     this.page.injectProps((StuartProject.Instance.configs?.props ?? {}) as any);
 
-    console.log(this.page.content);
+    this.page.lock();
+
+    return this.page.content;
   }
 }

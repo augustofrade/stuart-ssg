@@ -3,6 +3,7 @@ import ConfigFile, { Config } from "../../helpers/ConfigFile";
 export default class StuartPage {
   public readonly configs: Config;
   public content: string;
+  private built: boolean = false;
 
   public constructor(pageContent: string) {
     const lines = pageContent.split("\n");
@@ -31,6 +32,8 @@ export default class StuartPage {
   }
 
   public async parse(parseMethod: (string: string) => Promise<string>): Promise<this> {
+    this.verifyPageStatus();
+
     if (!this.content) {
       throw new Error("Page content is empty. Cannot parse.");
     }
@@ -40,6 +43,8 @@ export default class StuartPage {
   }
 
   public injectTheme(themeHTML: string): this {
+    this.verifyPageStatus();
+
     if (themeHTML.includes("%PAGE_CONTENT%") === false) {
       throw new Error("Passed theme HTML does not contain a placeholder for page content.");
     }
@@ -48,6 +53,8 @@ export default class StuartPage {
   }
 
   public injectProps(props: Record<string, Config>): this {
+    this.verifyPageStatus();
+
     let builtTheme = this.content;
     for (const [key, value] of Object.entries(props)) {
       const placeholder = `%${key.toUpperCase()}%`;
@@ -56,5 +63,15 @@ export default class StuartPage {
     this.content = builtTheme;
 
     return this;
+  }
+
+  public lock() {
+    this.built = true;
+  }
+
+  private verifyPageStatus() {
+    if (this.built) {
+      throw new Error("Page has already been built.");
+    }
   }
 }
