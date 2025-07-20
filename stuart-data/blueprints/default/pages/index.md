@@ -1,8 +1,6 @@
-[PAGE_DEFINITIONS]
-title=Index
-description=This is the home pagee
-header=true
-footer=false
+[PAGE_DEFINITION]
+page_title=Index
+page_description=This is the home page
 
 [PAGE]
 
