@@ -1,4 +1,5 @@
 import ConfigFile from "../../helpers/ConfigFile";
+import { ResourceConfigSection } from "../../types/resource-config.type";
 
 /**
  * Singleton class containing the active project information
@@ -36,13 +37,7 @@ export default class StuartProject {
 export type StuartProjectSectionValue = string | boolean | number;
 
 export interface StuartProjectConfig {
-  project_definition: {
-    [key: string]: StuartProjectSectionValue;
-  };
-  props: {
-    [key: string]: StuartProjectSectionValue;
-  };
-  [key: string]: {
-    [key: string]: StuartProjectSectionValue;
-  };
+  project_definition: ResourceConfigSection;
+  props: ResourceConfigSection;
+  [key: string]: ResourceConfigSection;
 }

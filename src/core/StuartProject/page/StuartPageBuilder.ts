@@ -1,7 +1,6 @@
 import fs from "fs/promises";
 import { marked } from "marked";
 import StuartProject from "..";
-import { Config } from "../../../helpers/ConfigFile";
 import BobLogger from "../../BobLogger";
 import StuartPage from "../page/StuartPage";
 import ThemeBuilder from "../theme/ThemeBuilder";
@@ -50,17 +49,13 @@ export default class StuartPageBuilder {
       throw new Error("Page is not loaded. Call loadPage() first.");
     }
 
-    this.page.injectProps((StuartProject.Instance.configs?.project_definition ?? {}) as any);
+    this.page.injectProps(StuartProject.Instance.configs?.project_definition ?? {});
 
-    // TODO: improve this and standardize config records across the project
-    const pageProps = (this.page.configs?.page_definition ?? {}) as unknown as Record<
-      string,
-      Config
-    >;
+    const pageProps = this.page.configs?.page_definition ?? {};
     this.page.injectProps(pageProps);
     StuartPageBuilder.logger.logVerbose(`Building theme with props: ${JSON.stringify(pageProps)}`);
 
-    this.page.injectProps((StuartProject.Instance.configs?.props ?? {}) as any);
+    this.page.injectProps(StuartProject.Instance.configs?.props ?? {});
 
     this.page.lock();
 

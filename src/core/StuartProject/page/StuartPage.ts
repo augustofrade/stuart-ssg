@@ -1,5 +1,5 @@
 import ConfigFile from "../../../helpers/ConfigFile";
-import { ResourceConfig } from "../../../types/resource-config.type";
+import { ResourceConfig, ResourceConfigSection } from "../../../types/resource-config.type";
 
 export default class StuartPage {
   public readonly configs: ResourceConfig;
@@ -53,7 +53,7 @@ export default class StuartPage {
     return this;
   }
 
-  public injectProps(props: Record<string, ResourceConfig>): this {
+  public injectProps(props: ResourceConfigSection): this {
     this.verifyPageStatus();
 
     let builtTheme = this.content;
