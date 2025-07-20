@@ -49,10 +49,8 @@ export default class StuartProjectCreate {
       throw new Error(`Invalid blueprint configuration found in ${blueprintPath}`);
     }
 
-    const destinationPath = path.join(projectDirectory, "pages", "index.html");
-
-    this.logger.logDebug(`Copying blueprint files to ${destinationPath}...`);
-    await fs.cp(blueprintPath, destinationPath, { recursive: true });
+    this.logger.logDebug(`Copying blueprint files to ${projectDirectory}...`);
+    await fs.cp(blueprintPath, projectDirectory, { recursive: true });
 
     let config = await fs.readFile(path.join(blueprintPath, "stuart.conf"), "utf8");
 

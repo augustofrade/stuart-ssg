@@ -4,7 +4,12 @@ export default class ConfigFile {
   private constructor() {}
 
   public static async read(filePath: string): Promise<Config> {
-    const data = (await fs.readFile(filePath, "utf-8")).split("\n");
+    const data = await fs.readFile(filePath, "utf-8");
+    return this.parse(data);
+  }
+
+  public static parse(content: string): Config {
+    const data = content.split("\n");
     const config: Record<string, Record<string, string | number | boolean>> = {};
     let currentSection = "";
 

@@ -1,3 +1,11 @@
+[PAGE_DEFINITIONS]
+document=Index
+description=This is the home pagee
+header=true
+footer=false
+
+[PAGE]
+
 # Home Page
 
 Welcome to ${projectName}!
