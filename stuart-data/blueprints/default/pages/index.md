@@ -8,7 +8,7 @@ footer=false
 
 # Home Page
 
-Welcome to ${projectName}!
+Welcome to %PROJECT_NAME%!
 
 This is the home page of your Stuart project.
 
