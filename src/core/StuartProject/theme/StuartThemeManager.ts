@@ -3,9 +3,9 @@ import path from "path";
 import StuartProject from "..";
 import BobLogger from "../../BobLogger";
 
-export default class ThemeBuilder {
+export default class StuartThemeManager {
   private readonly logger = BobLogger.Instance;
-  private static instance: ThemeBuilder;
+  private static instance: StuartThemeManager;
   public themeContent: string | null = null;
 
   public async loadCurrentTheme(): Promise<this> {
@@ -25,10 +25,10 @@ export default class ThemeBuilder {
     return this;
   }
 
-  public static get Instance(): ThemeBuilder {
-    if (!ThemeBuilder.instance) {
-      ThemeBuilder.instance = new ThemeBuilder();
+  public static get Instance(): StuartThemeManager {
+    if (!StuartThemeManager.instance) {
+      StuartThemeManager.instance = new StuartThemeManager();
     }
-    return ThemeBuilder.instance;
+    return StuartThemeManager.instance;
   }
 }

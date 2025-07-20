@@ -1,7 +1,7 @@
 import StuartProject from ".";
 import StuartProjectCreate from "./handlers/project-create";
 import StuartPageBuilder from "./page/StuartPageBuilder";
-import ThemeBuilder from "./theme/ThemeBuilder";
+import StuartThemeManager from "./theme/StuartThemeManager";
 import { CreateStuartProjectOptions } from "./types";
 
 export default class StuartProjectManager {
@@ -21,7 +21,7 @@ export default class StuartProjectManager {
   }
 
   public static async buildSinglePage(fullPagePath: string): Promise<string> {
-    await ThemeBuilder.Instance.loadCurrentTheme();
+    await StuartThemeManager.Instance.loadCurrentTheme();
     return StuartProjectManager.buildPage(fullPagePath);
   }
 

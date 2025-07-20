@@ -3,7 +3,7 @@ import { marked } from "marked";
 import StuartProject from "..";
 import BobLogger from "../../BobLogger";
 import StuartPage from "../page/StuartPage";
-import ThemeBuilder from "../theme/ThemeBuilder";
+import StuartThemeManager from "../theme/StuartThemeManager";
 
 /**
  * Builder class for StuartPages.
@@ -59,7 +59,7 @@ export default class StuartPageBuilder {
       throw new Error("Page is not loaded. Call loadPage() first.");
     }
 
-    const theme = ThemeBuilder.Instance.themeContent;
+    const theme = StuartThemeManager.Instance.themeContent;
     if (!theme) {
       throw new Error("Theme content is not loaded. Call loadCurrentTheme() first.");
     }
