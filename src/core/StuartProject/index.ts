@@ -21,7 +21,8 @@ export default class StuartProject {
 
   public async readConfigFile() {
     // TODO: maybe move out of here
-    this.configs = (await ConfigFile.read(this.projectDirectory)) as StuartProjectConfig;
+    const configFilePath = `${this.projectDirectory}/stuart.conf`;
+    this.configs = (await ConfigFile.read(configFilePath)) as StuartProjectConfig;
   }
 
   public static get Instance() {
