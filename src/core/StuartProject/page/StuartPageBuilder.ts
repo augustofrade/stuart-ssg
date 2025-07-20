@@ -5,6 +5,15 @@ import BobLogger from "../../BobLogger";
 import StuartPage from "../page/StuartPage";
 import ThemeBuilder from "../theme/ThemeBuilder";
 
+/**
+ * Builder class for StuartPages.
+ *
+ * This class is responsible for loading, parsing, and building Stuart pages as well as
+ * applying the current theme and every resource configuration values,
+ * such as the project definitions.
+ *
+ * Serves as the main interface for page construction.
+ */
 export default class StuartPageBuilder {
   private page: StuartPage | null = null;
   private static readonly logger = BobLogger.Instance;
@@ -12,6 +21,13 @@ export default class StuartPageBuilder {
 
   public constructor() {}
 
+  /**
+   * Loads a page from the given file path.
+   *
+   * **Allows for chaining**
+   *
+   * @param fullPagePath - The absolute path to the page file.
+   */
   public async loadPage(fullPagePath: string): Promise<this> {
     const pageContent = await fs.readFile(fullPagePath, "utf-8");
     this.page = new StuartPage(pageContent);
@@ -19,6 +35,11 @@ export default class StuartPageBuilder {
     return this;
   }
 
+  /**
+   * Parses the markdown content of the loaded page using the provided parse method.
+   *
+   * **Allows for chaining**
+   */
   public async parseMarkdown(): Promise<this> {
     if (!this.page) {
       throw new Error("Page is not loaded. Call loadPage() first.");
@@ -30,6 +51,11 @@ export default class StuartPageBuilder {
     return this;
   }
 
+  /**
+   * Injects the current theme into the loaded page.
+   *
+   * **Allows for chaining**
+   */
   public injectTheme(): this {
     if (!this.page) {
       throw new Error("Page is not loaded. Call loadPage() first.");
@@ -44,6 +70,11 @@ export default class StuartPageBuilder {
     return this;
   }
 
+  /**
+   * Builds and injects all resource configuration values into the page content.
+   *
+   * @returns The final HTML content of the page.
+   */
   public build(): string {
     if (!this.page) {
       throw new Error("Page is not loaded. Call loadPage() first.");
