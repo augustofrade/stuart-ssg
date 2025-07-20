@@ -39,8 +39,11 @@ export default class StuartPage {
     return this;
   }
 
-  public injectTheme(theme: string): this {
-    this.content = theme.replace("%PAGE_CONTENT%", this.content);
+  public injectTheme(themeHTML: string): this {
+    if (themeHTML.includes("%PAGE_CONTENT%") === false) {
+      throw new Error("Passed theme HTML does not contain a placeholder for page content.");
+    }
+    this.content = themeHTML.replace("%PAGE_CONTENT%", this.content);
     return this;
   }
 
@@ -48,11 +51,7 @@ export default class StuartPage {
     let builtTheme = this.content;
     for (const [key, value] of Object.entries(props)) {
       const placeholder = `%${key.toUpperCase()}%`;
-      if (typeof value === "string") {
-        builtTheme = builtTheme.replace(new RegExp(placeholder, "g"), value);
-      } else if (typeof value === "boolean" || typeof value === "number") {
-        builtTheme = builtTheme.replace(new RegExp(placeholder, "g"), String(value));
-      }
+      builtTheme = builtTheme.replace(new RegExp(placeholder, "g"), String(value));
     }
     this.content = builtTheme;
 
