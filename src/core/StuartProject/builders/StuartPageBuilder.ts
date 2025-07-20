@@ -4,7 +4,7 @@ import StuartProject from "..";
 import { Config } from "../../../helpers/ConfigFile";
 import BobLogger from "../../BobLogger";
 import StuartPage from "../StuartPage";
-import ThemeBuilder from "./ThemeBuilder";
+import ThemeBuilder from "../stuart-theme/ThemeBuilder";
 
 export default class StuartPageBuilder {
   private page: StuartPage | null = null;
@@ -35,9 +35,8 @@ export default class StuartPageBuilder {
     if (!this.page) {
       throw new Error("Page is not loaded. Call loadPage() first.");
     }
-    const themeBuilder = ThemeBuilder.Instance;
 
-    const theme = themeBuilder.themeContent;
+    const theme = ThemeBuilder.Instance.themeContent;
     if (!theme) {
       throw new Error("Theme content is not loaded. Call loadCurrentTheme() first.");
     }
