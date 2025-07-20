@@ -1,5 +1,5 @@
 [PAGE_DEFINITIONS]
-document=Index
+title=Index
 description=This is the home pagee
 header=true
 footer=false
