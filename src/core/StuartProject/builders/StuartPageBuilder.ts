@@ -4,7 +4,7 @@ import StuartProject from "..";
 import { Config } from "../../../helpers/ConfigFile";
 import BobLogger from "../../BobLogger";
 import StuartPage from "../StuartPage";
-import ThemeBuilder from "../stuart-theme/ThemeBuilder";
+import ThemeBuilder from "../theme/ThemeBuilder";
 
 export default class StuartPageBuilder {
   private page: StuartPage | null = null;
