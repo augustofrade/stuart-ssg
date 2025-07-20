@@ -1,14 +1,15 @@
 import fs from "fs/promises";
+import { ResourceConfig } from "../types/resource-config.type";
 
 export default class ConfigFile {
   private constructor() {}
 
-  public static async read(filePath: string): Promise<Config> {
+  public static async read(filePath: string): Promise<ResourceConfig> {
     const data = await fs.readFile(filePath, "utf-8");
     return this.parse(data);
   }
 
-  public static parse(content: string): Config {
+  public static parse(content: string): ResourceConfig {
     const data = content.split("\n");
     const config: Record<string, Record<string, string | number | boolean>> = {};
     let currentSection = "";
@@ -40,10 +41,10 @@ export default class ConfigFile {
       config[currentSection][key] = value;
     }
 
-    return config as Config;
+    return config as ResourceConfig;
   }
 
-  public static async write(filePath: string, config: Record<string, any>): Promise<void> {
+  public static async write(filePath: string, config: ResourceConfig): Promise<void> {
     const lines: Array<string> = [];
 
     Object.entries(config).forEach(([section, data]) => {
@@ -56,10 +57,4 @@ export default class ConfigFile {
 
     await fs.writeFile(filePath, lines.join("\n").slice(1), "utf-8");
   }
-}
-
-export interface Config {
-  [key: string]: {
-    [key: string]: string | number | boolean;
-  };
 }

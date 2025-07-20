@@ -2,7 +2,8 @@ import chalk from "chalk";
 import { existsSync } from "fs";
 import fs from "fs/promises";
 import path from "path";
-import ConfigFile, { Config } from "../../../helpers/ConfigFile";
+import ConfigFile from "../../../helpers/ConfigFile";
+import { ResourceConfig } from "../../../types/resource-config.type";
 import BobLogger from "../../BobLogger";
 import { CreateStuartProjectOptions } from "../types";
 
@@ -88,7 +89,7 @@ export default class StuartProjectCreate {
     component: "blueprint" | "theme",
     componentName: string,
     componentPath: string
-  ): Promise<Config> {
+  ): Promise<ResourceConfig> {
     if (existsSync(componentPath) === false) {
       throw new Error(`${component} ${componentName} does not exist`);
     }

@@ -1,7 +1,8 @@
-import ConfigFile, { Config } from "../../../helpers/ConfigFile";
+import ConfigFile from "../../../helpers/ConfigFile";
+import { ResourceConfig } from "../../../types/resource-config.type";
 
 export default class StuartPage {
-  public readonly configs: Config;
+  public readonly configs: ResourceConfig;
   public content: string;
   private built: boolean = false;
 
@@ -12,7 +13,7 @@ export default class StuartPage {
     this.content = lines.slice(startOfFile + 1).join("\n");
   }
 
-  private getPageDefinition(lines: string[]): [Config, number] {
+  private getPageDefinition(lines: string[]): [ResourceConfig, number] {
     const start = lines.indexOf("[PAGE_DEFINITION]");
     const end = lines.indexOf("[PAGE]", start);
     if (start === -1 || end === -1) {
@@ -52,7 +53,7 @@ export default class StuartPage {
     return this;
   }
 
-  public injectProps(props: Record<string, Config>): this {
+  public injectProps(props: Record<string, ResourceConfig>): this {
     this.verifyPageStatus();
 
     let builtTheme = this.content;
