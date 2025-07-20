@@ -3,7 +3,7 @@ import { marked } from "marked";
 import StuartProject from "..";
 import { Config } from "../../../helpers/ConfigFile";
 import BobLogger from "../../BobLogger";
-import StuartPage from "../StuartPage";
+import StuartPage from "../page/StuartPage";
 import ThemeBuilder from "../theme/ThemeBuilder";
 
 export default class StuartPageBuilder {

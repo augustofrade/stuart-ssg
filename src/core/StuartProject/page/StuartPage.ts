@@ -1,4 +1,4 @@
-import ConfigFile, { Config } from "../../helpers/ConfigFile";
+import ConfigFile, { Config } from "../../../helpers/ConfigFile";
 
 export default class StuartPage {
   public readonly configs: Config;

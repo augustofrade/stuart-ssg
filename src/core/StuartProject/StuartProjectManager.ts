@@ -1,6 +1,6 @@
 import StuartProject from ".";
-import StuartPageBuilder from "./builders/StuartPageBuilder";
 import StuartProjectCreate from "./handlers/project-create";
+import StuartPageBuilder from "./page/StuartPageBuilder";
 import ThemeBuilder from "./theme/ThemeBuilder";
 import { CreateStuartProjectOptions } from "./types";
 
