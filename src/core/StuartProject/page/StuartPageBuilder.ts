@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import { marked } from "marked";
+import path from "path";
 import StuartProject from "..";
 import BobLogger from "../../BobLogger";
 import StuartPage from "../page/StuartPage";
@@ -15,11 +16,19 @@ import StuartThemeManager from "../theme/StuartThemeManager";
  * Serves as the main interface for page construction.
  */
 export default class StuartPageBuilder {
-  private page: StuartPage | null = null;
   private static readonly logger = BobLogger.Instance;
+  private page: StuartPage | null = null;
+  private absolutePagePath: string = "";
+
   private static parseMethod = (string: string) => marked(string, { async: true });
 
-  public constructor(private readonly absolutePagePath: string) {}
+  public constructor(private readonly pagePath: string) {
+    this.absolutePagePath = path.join(
+      StuartProject.Instance.projectDirectory,
+      "pages",
+      this.pagePath
+    );
+  }
 
   /**
    * Loads the page corresponding to the file path passed into through the constructor.
@@ -54,12 +63,12 @@ export default class StuartPageBuilder {
    *
    * **Allows for chaining**
    */
-  public injectTheme(): this {
+  public async injectTheme(): Promise<this> {
     if (!this.page) {
       throw new Error("Page is not loaded. Call loadPage() first.");
     }
 
-    const theme = StuartThemeManager.Instance.themeContent;
+    const theme = await StuartThemeManager.Instance.getThemeTemplate(this.pagePath);
     if (!theme) {
       throw new Error("Theme content is not loaded. Call loadCurrentTheme() first.");
     }

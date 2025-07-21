@@ -1,4 +1,3 @@
-import path from "path";
 import { ArgumentsCamelCase } from "yargs";
 import BobLogger from "../core/BobLogger";
 import StuartProjectManager from "../core/StuartProject/StuartProjectManager";
@@ -23,9 +22,13 @@ export default async function buildCommand(args: ArgumentsCamelCase<BuildCommand
     return;
   }
 
-  const index = path.join(projectDirectory, "pages", "index.md");
-  console.log(await StuartProjectManager.buildSinglePage(index));
-
   logger.logInfo(`Building project in directory: ${projectDirectory}`);
   logger.logInfo(`Output will be saved to: ${outputDirectory}`);
+
+  const result = await StuartProjectManager.buildSinglePage("index.md");
+  if (result == null) {
+    return logger.logError(`Failed to build page.`);
+  }
+
+  console.log(result);
 }
