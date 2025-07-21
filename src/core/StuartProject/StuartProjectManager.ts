@@ -18,6 +18,9 @@ export default class StuartProjectManager {
       await project.readConfigFile();
       return true;
     } catch (error) {
+      this.logger.logError(
+        `Project not found in directory: ${directory}. Looked for 'stuart.conf' file.`
+      );
       return false;
     }
   }

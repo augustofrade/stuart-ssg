@@ -16,10 +16,7 @@ export default async function buildCommand(args: ArgumentsCamelCase<BuildCommand
 
   const validProject = await StuartProjectManager.loadProject(projectDirectory);
   if (!validProject) {
-    logger.logError(
-      `Project not found in directory: ${projectDirectory}. Looked for 'stuart.conf' file.`
-    );
-    return;
+    process.exit(1);
   }
 
   logger.logInfo(`Building project in directory: ${projectDirectory}`);
