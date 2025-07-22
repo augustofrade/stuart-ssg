@@ -21,7 +21,7 @@ export default class StuartThemeManager {
     if (!theme) {
       throw new Error("Could not find theme in project configuration.");
     }
-    this.logger.logVerbose(`Verifying theme: ${theme}`);
+    this.logger.logDebug(`Verifying theme: ${theme}`);
 
     this.themeDir = path.join(StuartProject.Instance.projectDirectory, "themes", theme);
 
@@ -52,7 +52,7 @@ export default class StuartThemeManager {
   }
 
   private async readThemeConfig(themeDir: string): Promise<void> {
-    this.logger.logVerbose(`Reading theme.conf in theme directory: ${themeDir}`);
+    this.logger.logVerbose(`Reading theme.conf in theme directory: ${themeDir}\n`);
 
     try {
       const themeConf = await ConfigFile.read(path.join(themeDir, "theme.conf"));
@@ -63,14 +63,7 @@ export default class StuartThemeManager {
   }
 
   private async readTemplateFile(templatePath: string): Promise<string> {
-    templatePath = templatePath.replace(this.themeDir, "");
-    this.logger.logVerbose(
-      `Template not in cache. Reading template file: ${templatePath} from theme...`
-    );
-    const templateContent = await fs.readFile(
-      path.join(this.themeDir, "path", templatePath),
-      "utf8"
-    );
+    const templateContent = await fs.readFile(path.join(this.themeDir, templatePath), "utf8");
     return templateContent;
   }
 

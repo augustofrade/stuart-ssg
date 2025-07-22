@@ -29,6 +29,15 @@ export default class BobLogger {
   }
 
   /**
+   * Logs if log level >= BobLogLevel.DEBUG
+   */
+  public logWarning(message: string): void {
+    if (this.logLevel >= BobLogLevel.DEBUG) {
+      console.warn(chalk.yellow(`[WARNING]  ${message}`));
+    }
+  }
+
+  /**
    * Logs if log level is set to the maximum allowed level, BobLogLevel.VERBOSE
    */
   public logVerbose(message: string): void {

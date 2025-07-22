@@ -36,6 +36,7 @@ export default class StuartPageBuilder {
    * **Allows for chaining**
    */
   public async loadPage(): Promise<this> {
+    StuartPageBuilder.logger.logInfo(`Starting page build from path: ${this.absolutePagePath}`);
     const pageContent = await fs.readFile(this.absolutePagePath, "utf-8");
     this.page = new StuartPage(pageContent);
 
@@ -52,7 +53,7 @@ export default class StuartPageBuilder {
       throw new Error("Page is not loaded. Call loadPage() first.");
     }
 
-    StuartPageBuilder.logger.logVerbose("Parsing markdown content");
+    StuartPageBuilder.logger.logDebug("Parsing markdown content");
     await this.page.parse(StuartPageBuilder.parseMethod);
 
     return this;

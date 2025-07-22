@@ -33,7 +33,7 @@ export default class StuartProjectManager {
     await StuartThemeManager.Instance.loadCurrentTheme();
 
     for (const page of pages) {
-      await StuartProjectManager.buildSinglePage(page);
+      const pageHTML = await StuartProjectManager.buildPage(page);
     }
   }
 

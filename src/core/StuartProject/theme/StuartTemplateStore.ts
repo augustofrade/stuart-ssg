@@ -1,9 +1,9 @@
-import chalk from "chalk";
+import { join } from "path";
 import BobLogger from "../../BobLogger";
 import { StuartPageFile } from "../page/types";
 
 export class StuartTemplateStore {
-  private static readonly logger = BobLogger.Instance;
+  private readonly logger = BobLogger.Instance;
 
   private templates: Record<string, string> = {};
   private fallbackTemplateHTML: string = "";
@@ -19,12 +19,18 @@ export class StuartTemplateStore {
   }
 
   public async getTemplate(file: StuartPageFile): Promise<string> {
-    const { fileName, parentPath } = file;
-    console.log(chalk.blue(fileName + " from " + parentPath + " of type " + file.pageType));
-    console.log(this.templates);
+    let { fileName, parentPath, pageType } = file;
+
+    // Homepage, can't be treated as any other type of page
     if (fileName === "index.html") {
-      return this.fallbackTemplateHTML;
+      fileName = join("templates", "home.html");
+    } else if (pageType === "single") {
+      fileName = join("templates", parentPath, "single.html");
+    } else if (pageType === "archive") {
+      fileName = join("templates", parentPath, "archive.html");
     }
+
+    this.logger.logDebug("Looking for template: " + fileName);
 
     if (this.templates[fileName]) {
       return this.templates[fileName];
@@ -35,7 +41,7 @@ export class StuartTemplateStore {
       this.setTemplate(fileName, content);
       return content;
     } catch {
-      StuartTemplateStore.logger.logVerbose(`Template not found: ${fileName}. Using fallback.`);
+      this.logger.logWarning(`Template not found: ${fileName}. Using fallback.`);
       return this.fallbackTemplateHTML;
     }
   }
