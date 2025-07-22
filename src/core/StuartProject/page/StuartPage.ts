@@ -1,5 +1,6 @@
 import ConfigFile from "../../../helpers/ConfigFile";
 import { ResourceConfig, ResourceConfigSection } from "../../../types/resource-config.type";
+import { StuartPageType } from "./types";
 
 export default class StuartPage {
   public readonly configs: ResourceConfig;
@@ -11,6 +12,16 @@ export default class StuartPage {
     const [config, startOfFile] = this.getPageDefinition(lines);
     this.configs = config;
     this.content = lines.slice(startOfFile + 1).join("\n");
+  }
+
+  public get type(): StuartPageType {
+    // TODO: move this to page definition parser
+    const type = this.configs?.page_definition?.page_type;
+    const validTypes = ["page", "single", "archive"];
+    if (!type || !validTypes.includes(type as any)) {
+      return "page";
+    }
+    return type.toString() as StuartPageType;
   }
 
   private getPageDefinition(lines: string[]): [ResourceConfig, number] {

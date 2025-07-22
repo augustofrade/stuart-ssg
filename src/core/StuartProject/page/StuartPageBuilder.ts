@@ -52,7 +52,7 @@ export default class StuartPageBuilder {
       throw new Error("Page is not loaded. Call loadPage() first.");
     }
 
-    StuartPageBuilder.logger.logVerbose(`Parsing markdown content: ${this.page.content}`);
+    StuartPageBuilder.logger.logVerbose("Parsing markdown content");
     await this.page.parse(StuartPageBuilder.parseMethod);
 
     return this;
@@ -68,7 +68,7 @@ export default class StuartPageBuilder {
       throw new Error("Page is not loaded. Call loadPage() first.");
     }
 
-    const theme = await StuartThemeManager.Instance.getThemeTemplate(this.pagePath);
+    const theme = await StuartThemeManager.Instance.getThemeTemplate(this.pagePath, this.page.type);
     if (!theme) {
       throw new Error("Theme content is not loaded. Call loadCurrentTheme() first.");
     }
@@ -91,7 +91,9 @@ export default class StuartPageBuilder {
 
     const pageProps = this.page.configs?.page_definition ?? {};
     this.page.injectProps(pageProps);
-    StuartPageBuilder.logger.logVerbose(`Building theme with props: ${JSON.stringify(pageProps)}`);
+    StuartPageBuilder.logger.logVerbose(
+      `Building template with props: ${JSON.stringify(pageProps)}`
+    );
 
     this.page.injectProps(StuartProject.Instance.configs?.props ?? {});
 

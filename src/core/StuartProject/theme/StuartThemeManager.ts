@@ -3,6 +3,7 @@ import path from "path";
 import StuartProject from "..";
 import ConfigFile from "../../../helpers/ConfigFile";
 import BobLogger from "../../BobLogger";
+import { StuartPageType } from "../page/types";
 import { StuartTemplateStore } from "./StuartTemplateStore";
 import StuartTheme from "./StuartTheme";
 import { StuartThemeDefinition } from "./types";
@@ -30,9 +31,13 @@ export default class StuartThemeManager {
     return this;
   }
 
-  public async getThemeTemplate(templatePath: string): Promise<string> {
-    templatePath = templatePath.slice(0, templatePath.lastIndexOf(".")) + ".html";
-    return this.templateStore.getTemplate(templatePath);
+  public async getThemeTemplate(templatePath: string, pageType: StuartPageType): Promise<string> {
+    const dir = path.dirname(templatePath);
+    return this.templateStore.getTemplate({
+      fileName: templatePath.slice(0, templatePath.lastIndexOf(".")) + ".html",
+      parentPath: dir === "." ? "" : dir,
+      pageType,
+    });
   }
 
   private async cacheFallbackTemplate(themeDir: string): Promise<void> {
