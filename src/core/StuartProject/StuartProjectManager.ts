@@ -1,4 +1,6 @@
+import path from "path";
 import StuartProject from ".";
+import readDirectoryRecursively from "../../helpers/readDirectoryRecursively";
 import BobLogger from "../BobLogger";
 import StuartProjectCreate from "./handlers/project-create";
 import StuartPageBuilder from "./page/StuartPageBuilder";
@@ -25,11 +27,20 @@ export default class StuartProjectManager {
     }
   }
 
+  public static async buildProject(): Promise<void> {
+    const pagesPath = path.join(StuartProject.Instance.projectDirectory, "pages");
+    const pages = await readDirectoryRecursively(pagesPath);
+    await StuartThemeManager.Instance.loadCurrentTheme();
+
+    for (const page of pages) {
+      await StuartProjectManager.buildSinglePage(page);
+    }
+  }
+
   public static async buildSinglePage(pagePath: string): Promise<string | null> {
     try {
       await StuartThemeManager.Instance.loadCurrentTheme();
       return StuartProjectManager.buildPage(pagePath);
-      return "";
     } catch (error) {
       console.log((error as Error).message);
       return null;

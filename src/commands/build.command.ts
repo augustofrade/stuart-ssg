@@ -22,10 +22,10 @@ export default async function buildCommand(args: ArgumentsCamelCase<BuildCommand
   logger.logInfo(`Building project in directory: ${projectDirectory}`);
   logger.logInfo(`Output will be saved to: ${outputDirectory}`);
 
-  const result = await StuartProjectManager.buildSinglePage("index.md");
+  const result = await StuartProjectManager.buildProject();
   if (result == null) {
     return logger.logError(`Failed to build page.`);
   }
 
-  console.log(result);
+  // console.log(result);
 }
