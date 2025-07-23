@@ -7,6 +7,7 @@ export interface StuartPageDefinition extends ResourceConfigSection {
 
 export type StuartPageType = "page" | "single" | "archive";
 
+// TODO: remove this redundant interface
 export interface StuartPageFile {
   parentPath: string;
   fileName: string;

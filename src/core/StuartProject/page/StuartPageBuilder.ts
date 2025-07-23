@@ -22,11 +22,11 @@ export default class StuartPageBuilder {
 
   private static parseMethod = (string: string) => marked(string, { async: true });
 
-  public constructor(private readonly pagePath: string) {
+  public constructor(private readonly projectPagePath: string) {
     this.absolutePagePath = path.join(
       StuartProject.Instance.projectDirectory,
       "pages",
-      this.pagePath
+      this.projectPagePath
     );
   }
 
@@ -36,9 +36,11 @@ export default class StuartPageBuilder {
    * **Allows for chaining**
    */
   public async loadPage(): Promise<this> {
-    StuartPageBuilder.logger.logInfo(`Starting page build from path: ${this.absolutePagePath}`);
+    StuartPageBuilder.logger.logInfo(`Starting page build from path: ${this.projectPagePath}`);
+
     const pageContent = await fs.readFile(this.absolutePagePath, "utf-8");
-    this.page = new StuartPage(pageContent);
+    this.page = new StuartPage(this.projectPagePath, pageContent);
+
     if (this.page.configs.page_definition?.page_name === "") {
       StuartPageBuilder.logger.logWarning(
         "Page name is empty. Pages should have a name defined in the [PAGE_DEFINITION] section."
@@ -74,7 +76,10 @@ export default class StuartPageBuilder {
       throw new Error("Page is not loaded. Call loadPage() first.");
     }
 
-    const theme = await StuartThemeManager.Instance.getThemeTemplate(this.pagePath, this.page.type);
+    const theme = await StuartThemeManager.Instance.getThemeTemplate(
+      this.projectPagePath,
+      this.page.type
+    );
     if (!theme) {
       throw new Error("Theme content is not loaded. Call loadCurrentTheme() first.");
     }
@@ -88,7 +93,7 @@ export default class StuartPageBuilder {
    *
    * @returns The final HTML content of the page.
    */
-  public build(): string {
+  public build(): StuartPage {
     if (!this.page) {
       throw new Error("Page is not loaded. Call loadPage() first.");
     }
@@ -105,6 +110,6 @@ export default class StuartPageBuilder {
 
     this.page.lock();
 
-    return this.page.content;
+    return this.page;
   }
 }

@@ -7,6 +7,7 @@ import getAbsolutePath from "../../helpers/get-absolute-path";
 import readDirectoryRecursively from "../../helpers/readDirectoryRecursively";
 import BobLogger from "../BobLogger";
 import StuartProjectCreate from "./handlers/project-create";
+import StuartPage from "./page/StuartPage";
 import StuartPageBuilder from "./page/StuartPageBuilder";
 import StuartThemeManager from "./theme/StuartThemeManager";
 import { CreateStuartProjectOptions } from "./types";
@@ -43,8 +44,10 @@ export default class StuartProjectManager {
 
     const buildPath = getAbsolutePath(outputDirectory);
     if (!existsSync(outputDirectory)) {
+      StuartProjectManager.logger.logInfo(
+        `Output directory does not exist. Creating: ${buildPath}`
+      );
       await fs.mkdir(buildPath, { recursive: true });
-      StuartProjectManager.logger.logInfo(`Created output directory: ${buildPath}`);
     }
 
     const results: BuildResults = {
@@ -52,41 +55,41 @@ export default class StuartProjectManager {
       failures: 0,
     };
 
-    for (const page of pages) {
-      let pageHTML;
+    for (const pageDir of pages) {
+      let page: StuartPage;
       try {
-        pageHTML = await StuartProjectManager.buildPage(page);
+        page = await StuartProjectManager.buildPage(pageDir);
       } catch {
-        StuartProjectManager.logger.logError(`Failed to build page: ${page}`);
+        StuartProjectManager.logger.logError(`Failed to build page: ${pageDir}`);
         results.failures++;
         continue;
       }
 
       results.pagesBuilt++;
-      StuartProjectManager.logger.logInfo(chalk.green(`Built page: ${page}`));
+      StuartProjectManager.logger.logInfo(chalk.green(`Built page: ${pageDir}`));
       console.log("");
 
-      // TODO: put basename resolving on StuartPage its path in the project
-      const outputFilePath = path.join(buildPath, page.slice(0, page.lastIndexOf(".")) + ".html");
+      const outputFilePath = path.join(buildPath, page.path.resultPath());
       const dir = path.dirname(outputFilePath);
       if (!existsSync(dir)) {
         await fs.mkdir(dir, { recursive: true });
       }
-      await fs.writeFile(outputFilePath, pageHTML, "utf-8");
+      await fs.writeFile(outputFilePath, page.content, "utf-8");
     }
   }
 
   public static async buildSinglePage(pagePath: string): Promise<string | null> {
     try {
       await StuartThemeManager.Instance.loadCurrentTheme();
-      return StuartProjectManager.buildPage(pagePath);
+      const page = await StuartProjectManager.buildPage(pagePath);
+      return page.content;
     } catch (error) {
       console.log((error as Error).message);
       return null;
     }
   }
 
-  private static async buildPage(pagePath: string): Promise<string> {
+  private static async buildPage(pagePath: string): Promise<StuartPage> {
     const pageBuilder = await new StuartPageBuilder(pagePath).loadPage();
     await pageBuilder.parseMarkdown();
     await pageBuilder.injectTheme();

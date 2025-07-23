@@ -1,5 +1,6 @@
 import ConfigFile from "../../../helpers/ConfigFile";
 import { ResourceConfig, ResourceConfigSection } from "../../../types/resource-config.type";
+import StuartPagePath from "./StuartPagePath";
 import { StuartPageDefinition, StuartPageType } from "./types";
 
 export default class StuartPage {
@@ -7,7 +8,12 @@ export default class StuartPage {
   public content: string;
   private built: boolean = false;
 
-  public constructor(pageContent: string) {
+  public readonly path: StuartPagePath = new StuartPagePath(this.projectPagePath);
+
+  public constructor(
+    public readonly projectPagePath: string,
+    pageContent: string
+  ) {
     const lines = pageContent.split("\n");
     const [config, startOfFile] = this.parsePageDefinition(lines);
     this.configs = config;
