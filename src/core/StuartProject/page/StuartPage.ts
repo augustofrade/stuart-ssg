@@ -1,6 +1,6 @@
 import ConfigFile from "../../../helpers/ConfigFile";
 import { ResourceConfig, ResourceConfigSection } from "../../../types/resource-config.type";
-import { StuartPageType } from "./types";
+import { StuartPageDefinition, StuartPageType } from "./types";
 
 export default class StuartPage {
   public readonly configs: ResourceConfig;
@@ -9,26 +9,26 @@ export default class StuartPage {
 
   public constructor(pageContent: string) {
     const lines = pageContent.split("\n");
-    const [config, startOfFile] = this.getPageDefinition(lines);
+    const [config, startOfFile] = this.parsePageDefinition(lines);
     this.configs = config;
     this.content = lines.slice(startOfFile + 1).join("\n");
   }
 
   public get type(): StuartPageType {
-    // TODO: move this to page definition parser
-    const type = this.configs?.page_definition?.page_type;
-    const validTypes = ["page", "single", "archive"];
-    if (!type || !validTypes.includes(type as any)) {
-      return "page";
-    }
-    return type.toString() as StuartPageType;
+    return this.configs.page_definition.page_type.toString() as StuartPageType;
   }
 
-  private getPageDefinition(lines: string[]): [ResourceConfig, number] {
+  private parsePageDefinition(lines: string[]): [ResourceConfig, number] {
+    const pageDefinition: StuartPageDefinition = {
+      page_description: "",
+      page_name: "",
+      page_type: "page",
+    };
+
     const start = lines.indexOf("[PAGE_DEFINITION]");
     const end = lines.indexOf("[PAGE]", start);
     if (start === -1 || end === -1) {
-      return [{}, 0];
+      return [{ page_definition: pageDefinition }, 0];
     }
 
     let rawConfig = lines
@@ -37,10 +37,20 @@ export default class StuartPage {
       .join("\n");
 
     if (rawConfig === "") {
-      return [{}, 0];
+      return [{ page_definition: pageDefinition }, 0];
     }
 
-    return [ConfigFile.parse(rawConfig), end];
+    const pageProps = ConfigFile.parse(rawConfig);
+    if (!pageProps.page_definition) {
+      pageProps.page_definition = pageDefinition;
+    } else if (
+      pageProps.page_definition.page_type !== "single" &&
+      pageProps.page_definition.page_type !== "archive"
+    ) {
+      pageProps.page_definition.page_type = "page";
+    }
+
+    return [pageProps, end];
   }
 
   public async parse(parseMethod: (string: string) => Promise<string>): Promise<this> {
