@@ -1,13 +1,14 @@
 {
   "name": "stuart-ssg",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Stuart Static Site Generator",
   "scripts": {
     "ts": "ts-node src/index.ts",
     "setup": "npm install && tsc && npm i -g"
   },
   "bin": {
-    "stuart": "./bin/index.js"
+    "stuart": "./bin/index.js",
+    "stu": "./bin/index.js"
   },
   "repository": {
     "type": "git",
