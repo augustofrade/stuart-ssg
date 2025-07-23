@@ -41,7 +41,7 @@ export class StuartTemplateStore {
       this.setTemplate(fileName, content);
       return content;
     } catch {
-      this.logger.logWarning(`Template not found: ${fileName}. Using fallback.`);
+      this.logger.logVerbose(`Template not found: ${fileName}. Using fallback.`);
       return this.fallbackTemplateHTML;
     }
   }

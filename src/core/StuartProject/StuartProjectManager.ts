@@ -8,7 +8,7 @@ import StuartThemeManager from "./theme/StuartThemeManager";
 import { CreateStuartProjectOptions } from "./types";
 
 export default class StuartProjectManager {
-  private static readonly logger = BobLogger.Instance.setLogLevel(2);
+  private static readonly logger = BobLogger.Instance;
   public static async create(options: CreateStuartProjectOptions): Promise<boolean> {
     return new StuartProjectCreate(options).handle();
   }

@@ -39,6 +39,11 @@ export default class StuartPageBuilder {
     StuartPageBuilder.logger.logInfo(`Starting page build from path: ${this.absolutePagePath}`);
     const pageContent = await fs.readFile(this.absolutePagePath, "utf-8");
     this.page = new StuartPage(pageContent);
+    if (this.page.configs.page_definition?.page_name === "") {
+      StuartPageBuilder.logger.logWarning(
+        "Page name is empty. Pages should have a name defined in the [PAGE_DEFINITION] section."
+      );
+    }
 
     return this;
   }
@@ -95,6 +100,7 @@ export default class StuartPageBuilder {
     StuartPageBuilder.logger.logVerbose(
       `Building template with props: ${JSON.stringify(pageProps)}`
     );
+    console.log("");
 
     this.page.injectProps(StuartProject.Instance.configs?.props ?? {});
 

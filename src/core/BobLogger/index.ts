@@ -16,7 +16,7 @@ export default class BobLogger {
    * Logs independent of the log level.
    */
   public logInfo(message: string): void {
-    console.log(chalk.gray(`[INFO]     ${message}`));
+    console.log(chalk.cyan(`[INFO]     ${message}`));
   }
 
   /**
@@ -24,7 +24,7 @@ export default class BobLogger {
    */
   public logDebug(message: string): void {
     if (this.logLevel >= BobLogLevel.DEBUG) {
-      console.log(`[DEBUG]    ${message}`);
+      console.log(chalk.blueBright(`[DEBUG]    ${message}`));
     }
   }
 
@@ -42,7 +42,7 @@ export default class BobLogger {
    */
   public logVerbose(message: string): void {
     if (this.logLevel == BobLogLevel.VERBOSE) {
-      console.log(`[VERBOSE]  ${message}`);
+      console.log(chalk.gray(`[VERBOSE]  ${message}`));
     }
   }
 

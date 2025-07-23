@@ -12,7 +12,7 @@ export default async function buildCommand(args: ArgumentsCamelCase<BuildCommand
   const projectDirectory = getAbsolutePath(args.project_directory ?? "");
   const outputDirectory = args.output ?? "dist";
 
-  const logger = BobLogger.Instance;
+  const logger = BobLogger.Instance.setLogLevel(2);
 
   const validProject = await StuartProjectManager.loadProject(projectDirectory);
   if (!validProject) {
