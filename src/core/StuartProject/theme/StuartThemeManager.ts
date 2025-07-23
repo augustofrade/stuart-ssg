@@ -25,8 +25,8 @@ export default class StuartThemeManager {
 
     this.themeDir = path.join(StuartProject.Instance.projectDirectory, "themes", theme);
 
-    this.cacheFallbackTemplate(this.themeDir);
-    this.readThemeConfig(this.themeDir);
+    await this.readThemeConfig(this.themeDir);
+    await this.cacheFallbackTemplate(this.themeDir);
 
     return this;
   }

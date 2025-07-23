@@ -50,7 +50,6 @@ yargs(hideBin(process.argv))
           alias: "o",
           describe: "Output directory for the build files. Defaults to 'dist'.",
           type: "string",
-          default: "dist",
         });
     },
     buildCommand

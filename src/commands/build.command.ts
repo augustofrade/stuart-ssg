@@ -1,3 +1,4 @@
+import { join } from "path";
 import { ArgumentsCamelCase } from "yargs";
 import BobLogger from "../core/BobLogger";
 import StuartProjectManager from "../core/StuartProject/StuartProjectManager";
@@ -10,9 +11,9 @@ interface BuildCommandArgs {
 
 export default async function buildCommand(args: ArgumentsCamelCase<BuildCommandArgs>) {
   const projectDirectory = getAbsolutePath(args.project_directory ?? "");
-  const outputDirectory = args.output ?? "dist";
+  const outputDirectory = args.output ?? join(projectDirectory, "dist");
 
-  const logger = BobLogger.Instance.setLogLevel(2);
+  const logger = BobLogger.Instance.setLogLevel(0);
 
   const validProject = await StuartProjectManager.loadProject(projectDirectory);
   if (!validProject) {
@@ -20,9 +21,9 @@ export default async function buildCommand(args: ArgumentsCamelCase<BuildCommand
   }
 
   logger.logInfo(`Building project in directory: ${projectDirectory}`);
-  logger.logInfo(`Output will be saved to: ${outputDirectory}`);
+  logger.logInfo(`Output will be saved to: ${outputDirectory}\n`);
 
-  const result = await StuartProjectManager.buildProject();
+  const result = await StuartProjectManager.buildProject(outputDirectory);
   if (result == null) {
     return logger.logError(`Failed to build page.`);
   }

@@ -100,7 +100,6 @@ export default class StuartPageBuilder {
     StuartPageBuilder.logger.logVerbose(
       `Building template with props: ${JSON.stringify(pageProps)}`
     );
-    console.log("");
 
     this.page.injectProps(StuartProject.Instance.configs?.props ?? {});
 
