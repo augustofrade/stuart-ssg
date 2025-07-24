@@ -13,6 +13,11 @@ export interface BuildResults {
   failures: number;
 }
 
+/**
+ * Command handler of StuartProjectManager for building the Stuart project.
+ * It builds all pages and static content in the project using the specified callback and
+ * saves them to the specified build path.
+ */
 export default class StuartProjectBuild {
   private readonly logger = BobLogger.Instance;
   private readonly results: BuildResults = {
@@ -21,11 +26,23 @@ export default class StuartProjectBuild {
     failures: 0,
   };
 
+  /**
+   * @param buildPath - The path where the built pages will be saved
+   * @param buildPageFn - A callback function that handles the building of a single page.
+   * It's used a callback because **StuartProjectBuild** handler is part of StuartProjectManager,
+   * thus there would be no sense in duplicating the page building logic here.
+   */
   public constructor(
     private readonly buildPath: string,
     private readonly buildPageFn: (pagePath: string) => Promise<StuartPage>
   ) {}
 
+  /**
+   * Handles the build process of the project,
+   * meaning that it will call the buildPage callback and save the results of each page in its corresponding .html file
+   * as well as handle the static content of the selected theme in the project.
+   * @returns The results of the build process, including the number of pages built and any failures encountered
+   */
   public async handle(): Promise<BuildResults> {
     try {
       await StuartThemeManager.Instance.loadCurrentTheme();
@@ -44,6 +61,7 @@ export default class StuartProjectBuild {
         this.logger.logInfo(chalk.green(`Built page: ${pagePath}\n`));
 
         await this.writeBuiltPageFile(page);
+        // TODO: handle static content copying
 
         this.results.pagesBuilt++;
       } catch (error) {
@@ -56,10 +74,17 @@ export default class StuartProjectBuild {
     return this.results;
   }
 
+  /**
+   * Creates the build directory if it does not exist.
+   */
   private async ensureBuildDirectoryExists(): Promise<void> {
     await fs.mkdir(this.buildPath, { recursive: true });
   }
 
+  /**
+   * Calls the buildPage callback to build a single page.
+   * @param pagePath - The path starting from `<project>/pages/` of the page to be built.
+   */
   private async buildPage(pagePath: string): Promise<StuartPage> {
     try {
       const page = await this.buildPageFn(pagePath);
@@ -70,6 +95,14 @@ export default class StuartProjectBuild {
     }
   }
 
+  /**
+   * Writes the built page content to a file in its corresponding path in the build directory.
+   *
+   * Output page directory is the same as the root of the build directory,
+   * meaning that page location is translated as from `<project>/pages/<page>.md` to `<buildPath>/<page>.html`.
+   *
+   * @param page - The StuartPage object that contains the content to be written to a file.
+   */
   private async writeBuiltPageFile(page: StuartPage): Promise<void> {
     const outputFilePath = path.join(this.buildPath, page.path.resultPath());
     const dir = path.dirname(outputFilePath);
