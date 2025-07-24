@@ -36,7 +36,7 @@ export default class StuartPageBuilder {
    * **Allows for chaining**
    */
   public async loadPage(): Promise<this> {
-    StuartPageBuilder.logger.logInfo(`Starting page build from path: ${this.projectPagePath}`);
+    StuartPageBuilder.logger.logInfo(`Starting page build: ${this.projectPagePath}`);
 
     const pageContent = await fs.readFile(this.absolutePagePath, "utf-8");
     this.page = new StuartPage(this.projectPagePath, pageContent);
