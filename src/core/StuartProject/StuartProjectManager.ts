@@ -2,7 +2,8 @@ import chalk from "chalk";
 import { existsSync } from "fs";
 import fs from "fs/promises";
 import path from "path";
-import StuartProject from ".";
+import StuartProject, { StuartProjectConfig } from ".";
+import ConfigFile from "../../helpers/ConfigFile";
 import getAbsolutePath from "../../helpers/get-absolute-path";
 import readDirectoryRecursively from "../../helpers/readDirectoryRecursively";
 import BobLogger from "../BobLogger";
@@ -22,24 +23,23 @@ export default class StuartProjectManager {
     const project = StuartProject.Instance;
     project.projectDirectory = directory;
     try {
-      await project.readConfigFile();
+      const configFilePath = `${directory}/stuart.conf`;
+      const configs = await ConfigFile.read(configFilePath);
+      project.init(configs as StuartProjectConfig);
       return true;
     } catch (error) {
-      this.logger.logError(
-        `Project not found in directory: ${directory}. Looked for 'stuart.conf' file.`
-      );
       return false;
     }
   }
 
-  public static async buildProject(outputDirectory: string): Promise<void> {
+  public static async buildProject(outputDirectory: string): Promise<BuildResults> {
     const pagesPath = path.join(StuartProject.Instance.projectDirectory, "pages");
     const pages = await readDirectoryRecursively(pagesPath);
     try {
       await StuartThemeManager.Instance.loadCurrentTheme();
     } catch (error) {
       StuartProjectManager.logger.logError((error as Error).message);
-      return;
+      return { pagesBuilt: 0, failures: 0, finished: false };
     }
 
     const buildPath = getAbsolutePath(outputDirectory);
@@ -51,6 +51,7 @@ export default class StuartProjectManager {
     }
 
     const results: BuildResults = {
+      finished: false,
       pagesBuilt: 0,
       failures: 0,
     };
@@ -76,6 +77,9 @@ export default class StuartProjectManager {
       }
       await fs.writeFile(outputFilePath, page.content, "utf-8");
     }
+
+    results.finished = true;
+    return results;
   }
 
   public static async buildSinglePage(pagePath: string): Promise<string | null> {
@@ -98,6 +102,7 @@ export default class StuartProjectManager {
 }
 
 interface BuildResults {
+  finished: boolean;
   pagesBuilt: number;
   failures: number;
 }

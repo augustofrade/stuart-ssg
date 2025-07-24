@@ -1,12 +1,14 @@
-import ConfigFile from "../../helpers/ConfigFile";
-import { ResourceConfigSection } from "../../types/resource-config.type";
+import { ResourceConfig, ResourceConfigSection } from "../../types/resource-config.type";
+import BobLogger from "../BobLogger";
 
 /**
  * Singleton class containing the active project information
  */
 export default class StuartProject {
+  private static readonly logger = BobLogger.Instance;
   private static instance: StuartProject;
 
+  public initialized = false;
   public projectDirectory: string = "";
   public configs: StuartProjectConfig = {
     project_definition: {},
@@ -15,15 +17,14 @@ export default class StuartProject {
 
   private constructor() {}
 
-  public setConfigs(configs: StuartProjectConfig): this {
+  public init(configs: StuartProjectConfig): this {
+    if (this.initialized) {
+      StuartProject.logger.logWarning("Stuart Project is already initialized.");
+      return this;
+    }
     this.configs = configs;
+    this.initialized = true;
     return this;
-  }
-
-  public async readConfigFile() {
-    // TODO: maybe move out of here
-    const configFilePath = `${this.projectDirectory}/stuart.conf`;
-    this.configs = (await ConfigFile.read(configFilePath)) as StuartProjectConfig;
   }
 
   public static get Instance() {
@@ -34,10 +35,7 @@ export default class StuartProject {
   }
 }
 
-export type StuartProjectSectionValue = string | boolean | number;
-
-export interface StuartProjectConfig {
+export interface StuartProjectConfig extends ResourceConfig {
   project_definition: ResourceConfigSection;
   props: ResourceConfigSection;
-  [key: string]: ResourceConfigSection;
 }
