@@ -76,10 +76,7 @@ export default class StuartPageBuilder {
       throw new Error("Page is not loaded. Call loadPage() first.");
     }
 
-    const theme = await StuartThemeManager.Instance.getThemeTemplate(
-      this.projectPagePath,
-      this.page.type
-    );
+    const theme = await StuartThemeManager.Instance.getTemplateForPage(this.page);
     if (!theme) {
       throw new Error("Theme content is not loaded. Call loadCurrentTheme() first.");
     }

@@ -1,6 +1,6 @@
 import { join } from "path";
 import BobLogger from "../../BobLogger";
-import { StuartPageFile } from "../page/types";
+import StuartPage from "../page/StuartPage";
 
 export class StuartTemplateStore {
   private readonly logger = BobLogger.Instance;
@@ -18,11 +18,13 @@ export class StuartTemplateStore {
     this.templates[filePath] = content;
   }
 
-  public async getTemplate(file: StuartPageFile): Promise<string> {
-    let { fileName, parentPath, pageType } = file;
+  public async getTemplate(stuartPage: StuartPage): Promise<string> {
+    let fileName = stuartPage.path.withoutExtension();
+    const parentPath = stuartPage.path.dirName();
+    const pageType = stuartPage.type;
 
     // Homepage, can't be treated as any other type of page
-    if (fileName === "index.html") {
+    if (fileName === "index") {
       fileName = join("templates", "home.html");
     } else if (pageType === "single") {
       fileName = join("templates", parentPath, "single.html");

@@ -66,6 +66,7 @@ export default class StuartPagePath {
    * Example: `posts/index.md` is converted to `posts`
    */
   public dirName(): string {
-    return dirname(this._projectPagePath);
+    const dir = dirname(this._projectPagePath);
+    return dir === "." ? "" : dir;
   }
 }

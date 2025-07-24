@@ -3,7 +3,7 @@ import path from "path";
 import StuartProject from "..";
 import ConfigFile from "../../../helpers/ConfigFile";
 import BobLogger from "../../BobLogger";
-import { StuartPageType } from "../page/types";
+import StuartPage from "../page/StuartPage";
 import { StuartTemplateStore } from "./StuartTemplateStore";
 import StuartTheme from "./StuartTheme";
 import { StuartThemeDefinition } from "./types";
@@ -31,13 +31,8 @@ export default class StuartThemeManager {
     return this;
   }
 
-  public async getThemeTemplate(templatePath: string, pageType: StuartPageType): Promise<string> {
-    const dir = path.dirname(templatePath);
-    return this.templateStore.getTemplate({
-      fileName: templatePath.slice(0, templatePath.lastIndexOf(".")) + ".html",
-      parentPath: dir === "." ? "" : dir,
-      pageType,
-    });
+  public async getTemplateForPage(stuartPage: StuartPage): Promise<string> {
+    return this.templateStore.getTemplate(stuartPage);
   }
 
   private async cacheFallbackTemplate(themeDir: string): Promise<void> {
