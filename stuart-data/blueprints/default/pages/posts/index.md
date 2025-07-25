@@ -1,6 +1,7 @@
 [PAGE_DEFINITION]
 page_title=Posts list page
 page_description=Posts archive
+page_type=archive
 
 [PAGE]
 
