@@ -29,7 +29,7 @@ export default class StuartProjectBuild {
   /**
    * @param buildPath - The path where the built pages will be saved
    * @param buildPageFn - A callback function that handles the building of a single page.
-   * It's used a callback because **StuartProjectBuild** handler is part of StuartProjectManager,
+   * A callback is used because **StuartProjectBuild** handler is part of StuartProjectManager,
    * thus there would be no sense in duplicating the page building logic here.
    */
   public constructor(
@@ -41,6 +41,7 @@ export default class StuartProjectBuild {
    * Handles the build process of the project,
    * meaning that it will call the buildPage callback and save the results of each page in its corresponding .html file
    * as well as handle the static content of the selected theme in the project.
+   *
    * @returns The results of the build process, including the number of pages built and any failures encountered
    */
   public async handle(): Promise<BuildResults> {
@@ -83,6 +84,7 @@ export default class StuartProjectBuild {
 
   /**
    * Calls the buildPage callback to build a single page.
+   *
    * @param pagePath - The path starting from `<project>/pages/` of the page to be built.
    */
   private async buildPage(pagePath: string): Promise<StuartPage> {

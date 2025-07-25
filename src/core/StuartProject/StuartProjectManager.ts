@@ -3,11 +3,10 @@ import ConfigFile from "../../helpers/ConfigFile";
 import getAbsolutePath from "../../helpers/get-absolute-path";
 import BobLogger from "../BobLogger";
 import StuartProjectBuild, { BuildResults } from "./handlers/project-build";
-import StuartProjectCreate from "./handlers/project-create";
+import StuartProjectCreate, { CreateStuartProjectOptions } from "./handlers/project-create";
 import StuartPage from "./page/StuartPage";
 import StuartPageBuilder from "./page/StuartPageBuilder";
 import StuartThemeManager from "./theme/StuartThemeManager";
-import { CreateStuartProjectOptions } from "./types";
 
 /**
  * Main class for Stuart Project related operations.
@@ -37,8 +36,6 @@ export default class StuartProjectManager {
 
   /**
    * Creates a new Stuart project.
-   *
-   * Acts as a convenience wrapper for creating a new Stuart project.
    */
   public static async create(options: CreateStuartProjectOptions): Promise<boolean> {
     return new StuartProjectCreate(options).handle();

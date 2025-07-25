@@ -5,15 +5,35 @@ import path from "path";
 import ConfigFile from "../../../helpers/ConfigFile";
 import { ResourceConfig } from "../../../types/resource-config.type";
 import BobLogger from "../../BobLogger";
-import { CreateStuartProjectOptions } from "../types";
 
+export interface CreateStuartProjectOptions {
+  projectName: string;
+  projectDirectory: string;
+  blueprint: string;
+  theme: string;
+}
+
+/**
+ * Command handler of StuartProjectManager for creating a new Stuart project.
+ * It creates a new project using the specified blueprint
+ * and sets the specified values, such as the theme.
+ */
 export default class StuartProjectCreate {
   private readonly logger = BobLogger.Instance;
   private readonly BLUEPRINTS_DIR = path.join(__dirname, "../../../../stuart-data/blueprints");
   private readonly THEMES_DIR = path.join(__dirname, "../../../../stuart-data/themes");
 
+  /**
+   * @param options - The options for creating the project.
+   */
   public constructor(private readonly options: CreateStuartProjectOptions) {}
 
+  /**
+   * Handles the creation of a new Stuart project by creating the project directory and setting
+   * everything up according to what was specified in the options and is needed for a valid Stuart project.
+   *
+   * @returns Whether the project was successfully created or not.
+   */
   public async handle(): Promise<boolean> {
     const { projectDirectory, theme, blueprint } = this.options;
 
@@ -26,19 +46,29 @@ export default class StuartProjectCreate {
 
       await this.useTheme();
       this.logger.logInfo(`Set theme to ${chalk.blue(theme)}`);
+      return true;
     } catch (error) {
       this.logger.logError(`Failed to create project:\n${(error as Error).message}`);
       fs.rm(projectDirectory, { recursive: true }).catch(() => {});
       return false;
     }
-
-    return true;
   }
 
+  /**
+   * Creates the project directory.
+   */
   private async createProjectDirectory(): Promise<void> {
+    // TODO: change the name of the method and verify whether the directory is empty
     await fs.mkdir(path.join(this.options.projectDirectory, "pages"), { recursive: true });
   }
 
+  /**
+   * Verifies the specified blueprint and copies its files to the project directory.
+   *
+   * Blueprints are located under `stuart-data/blueprints` directory.
+   *
+   * Can be used before or after theme setting.
+   */
   private async useBlueprint(): Promise<void> {
     const { projectDirectory, blueprint, projectName, theme } = this.options;
     this.logger.logDebug(`Verifying "${blueprint}" blueprint...`);
@@ -60,6 +90,11 @@ export default class StuartProjectCreate {
     await fs.writeFile(path.join(projectDirectory, "stuart.conf"), config, "utf8");
   }
 
+  /**
+   * Verifies the specified theme and copies its files to the project directory.
+   *
+   * Themes are located under `stuart-data/themes` directory.
+   */
   private async useTheme(): Promise<void> {
     const { theme } = this.options;
 
@@ -85,6 +120,14 @@ export default class StuartProjectCreate {
     });
   }
 
+  /**
+   * Retrieves the resource configuration for the specified component.
+   *
+   * @param component The type of component (blueprint or theme).
+   * @param componentName The name of the component.
+   * @param componentPath The path to the component's directory.
+   * @returns The resource configuration of the component.
+   */
   private async getConfigFile(
     component: "blueprint" | "theme",
     componentName: string,
