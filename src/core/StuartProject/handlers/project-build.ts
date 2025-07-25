@@ -52,9 +52,11 @@ export default class StuartProjectBuild {
       return this.results;
     }
 
-    await this.ensureBuildDirectoryExists();
     const pagesPath = path.join(StuartProject.Instance.projectDirectory, "pages");
     const pages = await readDirectoryRecursively(pagesPath);
+
+    await this.ensureBuildDirectoryExists();
+    await this.copyStaticThemeContent();
 
     for (const pagePath of pages) {
       try {
@@ -79,7 +81,26 @@ export default class StuartProjectBuild {
    * Creates the build directory if it does not exist.
    */
   private async ensureBuildDirectoryExists(): Promise<void> {
-    await fs.mkdir(this.buildPath, { recursive: true });
+    await fs.mkdir(path.join(this.buildPath, "static"), { recursive: true });
+  }
+
+  private async copyStaticThemeContent(): Promise<void> {
+    const projectDirectory = StuartProject.Instance.projectDirectory;
+    const currentTheme = StuartProject.Instance.configs?.project_definition?.theme as string;
+    const originPath = path.join(projectDirectory, "themes", currentTheme, "static");
+
+    this.logger.logVerbose("Copying static content from theme directory");
+
+    // TODO: apply CSS minification strategy
+    for (const file of await fs.readdir(originPath, { recursive: true, withFileTypes: true })) {
+      const destPath = path.join(this.buildPath, "static", file.name);
+
+      if (file.isDirectory()) {
+        await fs.mkdir(destPath, { recursive: true });
+        continue;
+      }
+      await fs.cp(path.join(file.parentPath, file.name), destPath);
+    }
   }
 
   /**
