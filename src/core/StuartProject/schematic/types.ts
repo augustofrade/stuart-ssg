@@ -8,7 +8,7 @@ export interface StuartSchematicDetails {
 export type StuartSchematicCollection = Record<StuartSchematic, StuartSchematicDetails>;
 
 export type CreateSchematicOptions = {
-  title?: string;
+  title: string;
   description?: string;
   category?: string;
 };

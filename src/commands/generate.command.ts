@@ -57,7 +57,11 @@ export default async function generateCommand(args: ArgumentsCamelCase<GenerateC
   console.log("\n");
 
   try {
-    await StuartSchematicGenerator.generate(args.schematic as StuartSchematic, options);
+    const result = await StuartSchematicGenerator.generate(
+      args.schematic as StuartSchematic,
+      options
+    );
+    console.log(chalk.green(`Schematic generated successfully at ${result}`));
   } catch (error) {
     console.log(chalk.red(`Failed to generate schematic.\n\n${(error as Error).message}`));
     process.exit(1);
