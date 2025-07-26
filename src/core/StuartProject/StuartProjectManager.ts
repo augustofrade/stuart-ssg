@@ -1,3 +1,5 @@
+import fs from "fs/promises";
+import { join } from "path";
 import StuartProject, { StuartProjectConfig } from ".";
 import ConfigFile from "../../helpers/ConfigFile";
 import getAbsolutePath from "../../helpers/get-absolute-path";
@@ -39,6 +41,13 @@ export default class StuartProjectManager {
    */
   public static async create(options: CreateStuartProjectOptions): Promise<boolean> {
     return new StuartProjectCreate(options).handle();
+  }
+
+  public static async getCategories(): Promise<string[]> {
+    const dirents = await fs.readdir(join(StuartProject.Instance.projectDirectory, "pages"), {
+      withFileTypes: true,
+    });
+    return dirents.filter((dirent) => dirent.isDirectory()).map((dirent) => dirent.name);
   }
 
   /**

@@ -3,6 +3,7 @@
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import buildCommand from "./commands/build.command";
+import generateCommand from "./commands/generate.command";
 import newCommand from "./commands/new.command";
 
 yargs(hideBin(process.argv))
@@ -54,5 +55,37 @@ yargs(hideBin(process.argv))
     },
     buildCommand
   )
+  .command({
+    command: "generate [schematic] [title]",
+    aliases: ["g"],
+    describe: "Generates a new Stuart file based on a schematic",
+    builder: (yargs) => {
+      return yargs
+        .positional("schematic", {
+          describe: "The schematic to use for generation",
+          type: "string",
+        })
+        .positional("title", {
+          describe:
+            "The title of the file to generate. If not provided, an interactive prompt will be shown.",
+          type: "string",
+        })
+        .option("description", {
+          alias: "d",
+          describe: "A description for the generated file",
+          type: "string",
+        })
+        .option("category", {
+          alias: "c",
+          describe:
+            "The category of the generated file (e.g., 'blog', 'portfolio'). This will determine the directory structure.\n" +
+            "If not provided, the default category will be used, meaning that the page will be saved in the root pages folder.",
+          type: "string",
+        });
+    },
+    handler: generateCommand,
+  })
   .version(true)
   .help(true).argv;
+
+// stu generate page "Awesome Page" --description "This is an awesome page" --dir website
