@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import { join } from "path";
 import StuartProject from "..";
 import getArgvString from "../../../helpers/get-argv-string";
+import replaceAll from "../../../helpers/replace-all";
 import slugify from "../../../helpers/slugify";
 import BobLogger from "../../BobLogger";
 import StuartProjectManager from "../StuartProjectManager";
@@ -23,7 +24,7 @@ export default class StuartSchematicGenerator {
     const handlers: Record<StuartSchematic, (options: CreateSchematicOptions) => Promise<string>> =
       {
         page: this.handlePageSchematic,
-        archive: this.handlePageSchematic,
+        archive: this.handleArchiveSchematic,
         single: this.handlePageSchematic,
       };
 
@@ -36,26 +37,43 @@ export default class StuartSchematicGenerator {
     const template = await StuartSchematicGenerator.handleSchematicContent("page", options);
 
     const filename = slugify(options.title);
-    const pagePath = join("pages", options.category ?? "", filename + ".md");
+    const filePath = join("pages", options.category ?? "", filename + ".md");
 
-    await fs.writeFile(join(StuartProject.Instance.projectDirectory, pagePath), template, "utf8");
-    return pagePath;
+    await fs.writeFile(join(StuartProject.Instance.projectDirectory, filePath), template, "utf8");
+    return filePath;
+  }
+
+  private static async handleArchiveSchematic(options: CreateSchematicOptions): Promise<string> {
+    await StuartSchematicGenerator.verifyCategory(options.category);
+    const newCategoryName = slugify(options.title);
+
+    const template = await StuartSchematicGenerator.handleSchematicContent("archive", {
+      page_title: options.title.toUpperCase(),
+      page_description: options.description ?? "No description provided",
+      page_type: "archive",
+      page_category: newCategoryName,
+      generation_command: getArgvString(),
+    });
+
+    let dir = join("pages", options.category ?? "", newCategoryName);
+    const fullPath = join(StuartProject.Instance.projectDirectory, dir);
+
+    await fs.mkdir(fullPath, { recursive: true });
+
+    const filePath = join(dir, "index.md");
+    dir = join(StuartProject.Instance.projectDirectory, filePath);
+    await fs.writeFile(dir, template, "utf8");
+
+    return filePath;
   }
 
   private static async handleSchematicContent(
     schematic: StuartSchematic,
-    options: CreateSchematicOptions
+    replaceValues: Record<string, any>
   ) {
     const schematicDir = join(StuartSchematicGenerator.SCHEMATICS_DIR, schematic + ".md");
     let template = await fs.readFile(schematicDir, "utf8");
-    template = template
-      .replace(new RegExp("%PAGE_TITLE%", "g"), options.title)
-      .replace(
-        new RegExp("%PAGE_DESCRIPTION%", "g"),
-        options.description ?? "No description provided"
-      )
-      .replace(new RegExp("%COMMAND%", "g"), getArgvString());
-
+    template = replaceAll(template, replaceValues);
     return template;
   }
 
@@ -64,6 +82,7 @@ export default class StuartSchematicGenerator {
       return;
     }
 
+    // TODO: return boolean and throw errors on caller side
     const categories = await StuartProjectManager.getCategories();
     if (!categories.includes(category)) {
       throw new Error(
