@@ -24,11 +24,16 @@ export default class ArchiveGenerator extends StuartBaseGenerator {
     });
 
     let dir = join("pages", filePath);
-    const fullPath = join(StuartProject.Instance.projectDirectory, dir);
 
+    const newCategoryProjectPath = join(definition.category ?? "", newCategoryName);
     // TODO: make a better way to handle directories as this wont handle nested directories
-    if (!(await StuartProjectManager.getCategories()).includes(newCategoryName)) {
-      await fs.mkdir(fullPath, { recursive: true });
+    if (!(await StuartProjectManager.getCategories()).includes(newCategoryProjectPath)) {
+      await fs.mkdir(
+        join(StuartProject.Instance.projectDirectory, "pages", newCategoryProjectPath),
+        {
+          recursive: true,
+        }
+      );
     }
 
     dir = join(StuartProject.Instance.projectDirectory, dir);
