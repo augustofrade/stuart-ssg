@@ -1,8 +1,10 @@
 import fs from "fs/promises";
 import { join } from "path";
+import StuartProject from "../..";
 import replaceAll from "../../../../helpers/replace-all";
 import slugify from "../../../../helpers/slugify";
 import BobLogger from "../../../BobLogger";
+import StuartProjectManager from "../../StuartProjectManager";
 import { StuartGenerateDefinition, StuartGenerateOptions, StuartSchematic } from "../types";
 
 export default abstract class BaseSchematicGenerator {
@@ -27,5 +29,32 @@ export default abstract class BaseSchematicGenerator {
     return template;
   }
 
-  protected abstract verifyCategory(category: string | undefined): Promise<void>;
+  protected async verifyPageExists(pagePath: string): Promise<void> {
+    if (this.options.force) return;
+
+    const fullPath = join(StuartProject.Instance.projectDirectory, "pages", pagePath);
+    this.logger.logDebug(`Looking for page: ${pagePath}`);
+
+    try {
+      await fs.stat(fullPath);
+      throw new Error(`Page already exists: ${pagePath}`);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+        throw error;
+      }
+    }
+  }
+
+  protected async verifyCategory(category: string | undefined): Promise<void> {
+    if (!category) {
+      return;
+    }
+
+    const categories = await StuartProjectManager.getCategories();
+    if (!categories.includes(category)) {
+      throw new Error(
+        `Invalid category: ${category}.\nAvailable categories: ${categories.join(", ")}`
+      );
+    }
+  }
 }

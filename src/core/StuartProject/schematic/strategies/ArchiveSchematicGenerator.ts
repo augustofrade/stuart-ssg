@@ -13,7 +13,8 @@ export default class ArchiveSchematicGenerator extends BaseSchematicGenerator {
     await this.verifyCategory(definition.category);
 
     const newCategoryName = this.slugify(definition.title);
-    this.logger.logDebug(`Looking for page in category: ${newCategoryName}`);
+    const filePath = join(definition.category ?? "", newCategoryName, "index.md");
+    await this.verifyPageExists(filePath);
 
     const template = await this.handleSchematicContent({
       page_title: definition.title.toUpperCase(),
@@ -22,28 +23,17 @@ export default class ArchiveSchematicGenerator extends BaseSchematicGenerator {
       generation_command: getArgvString(),
     });
 
-    let dir = join("pages", definition.category ?? "", newCategoryName);
+    let dir = join("pages", filePath);
     const fullPath = join(StuartProject.Instance.projectDirectory, dir);
 
-    await fs.mkdir(fullPath, { recursive: true });
+    // TODO: make a better way to handle directories as this wont handle nested directories
+    if (!(await StuartProjectManager.getCategories()).includes(newCategoryName)) {
+      await fs.mkdir(fullPath, { recursive: true });
+    }
 
-    const filePath = join(dir, "index.md");
-    dir = join(StuartProject.Instance.projectDirectory, filePath);
+    dir = join(StuartProject.Instance.projectDirectory, dir);
     await fs.writeFile(dir, template, "utf8");
 
     return filePath;
-  }
-
-  protected async verifyCategory(category: string | undefined): Promise<void> {
-    if (!category) {
-      return;
-    }
-
-    const categories = await StuartProjectManager.getCategories();
-    if (!categories.includes(category)) {
-      throw new Error(
-        `Invalid category: ${category}.\nAvailable categories: ${categories.join(", ")}`
-      );
-    }
   }
 }

@@ -43,6 +43,7 @@ export default class StuartProjectManager {
     return new StuartProjectCreate(options).handle();
   }
 
+  // TODO: improve method for nested categories and cache
   public static async getCategories(): Promise<string[]> {
     const dirents = await fs.readdir(join(StuartProject.Instance.projectDirectory, "pages"), {
       withFileTypes: true,

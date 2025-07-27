@@ -59,11 +59,12 @@ export default async function generateCommand(args: ArgumentsCamelCase<GenerateC
     force: args.force!,
   };
 
-  logger.logInfo(`Generating schematic: ${args.schematic} with definition`);
+  logger.logInfo(`Generating schematic: ${args.schematic}`);
+  logger.logInfo("Page definition:");
   Object.entries(definition).forEach(([key, value]) => {
     console.log(`  ${key}: ${value ?? chalk.italic("not provided")}`);
   });
-  console.log("\n");
+  console.log("");
 
   try {
     const result = await StuartSchematicGenerator.generate(
