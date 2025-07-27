@@ -1,4 +1,5 @@
 import ConfigFile from "../../../helpers/ConfigFile";
+import replaceAll from "../../../helpers/replace-all";
 import { ResourceConfig, ResourceConfigSection } from "../../../types/resource-config.type";
 import StuartPagePath from "./StuartPagePath";
 import { StuartPageDefinition, StuartPageType } from "./types";
@@ -134,12 +135,7 @@ export default class StuartPage {
   public injectProps(props: ResourceConfigSection): this {
     this.verifyPageStatus();
 
-    let builtTheme = this.content;
-    for (const [key, value] of Object.entries(props)) {
-      const placeholder = `%${key.toUpperCase()}%`;
-      builtTheme = builtTheme.replace(new RegExp(placeholder, "g"), String(value));
-    }
-    this.content = builtTheme;
+    this.content = replaceAll(this.content, props);
 
     return this;
   }
