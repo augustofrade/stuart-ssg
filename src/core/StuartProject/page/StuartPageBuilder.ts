@@ -18,16 +18,12 @@ import StuartThemeManager from "../theme/StuartThemeManager";
 export default class StuartPageBuilder {
   private static readonly logger = BobLogger.Instance;
   private page: StuartPage | null = null;
-  private absolutePagePath: string = "";
+  private absolutePagePath: string;
 
   private static parseMethod = (string: string) => marked(string, { async: true });
 
   public constructor(private readonly projectPagePath: string) {
-    this.absolutePagePath = path.join(
-      StuartProject.Instance.projectDirectory,
-      "pages",
-      this.projectPagePath
-    );
+    this.absolutePagePath = path.join(StuartProject.Instance.paths.pages, this.projectPagePath);
   }
 
   /**

@@ -19,9 +19,13 @@ export default class PageGenerator extends StuartBaseGenerator {
     });
 
     const filename = this.slugify(definition.title);
-    const filePath = join("pages", definition.category ?? "", filename + ".md");
+    const filePath = join(
+      StuartProject.Instance.paths.pages,
+      definition.category ?? "",
+      filename + ".md"
+    );
 
-    await fs.writeFile(join(StuartProject.Instance.projectDirectory, filePath), template, "utf8");
+    await fs.writeFile(filePath, template, "utf8");
     return filePath;
   }
 }

@@ -28,15 +28,12 @@ export default class ArchiveGenerator extends StuartBaseGenerator {
     const newCategoryProjectPath = join(definition.category ?? "", newCategoryName);
     // TODO: make a better way to handle directories as this wont handle nested directories
     if (!(await StuartProjectManager.getCategories()).includes(newCategoryProjectPath)) {
-      await fs.mkdir(
-        join(StuartProject.Instance.projectDirectory, "pages", newCategoryProjectPath),
-        {
-          recursive: true,
-        }
-      );
+      await fs.mkdir(join(StuartProject.Instance.paths.pages, newCategoryProjectPath), {
+        recursive: true,
+      });
     }
 
-    dir = join(StuartProject.Instance.projectDirectory, dir);
+    dir = join(StuartProject.Instance.paths.root, dir);
     await fs.writeFile(dir, template, "utf8");
 
     return filePath;

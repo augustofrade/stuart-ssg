@@ -23,7 +23,7 @@ export default class StuartThemeManager {
     }
     this.logger.logDebug(`Verifying theme: ${theme}`);
 
-    this.themeDir = path.join(StuartProject.Instance.projectDirectory, "themes", theme);
+    this.themeDir = path.join(StuartProject.Instance.paths.themes, theme);
 
     await this.readThemeConfig(this.themeDir);
     await this.cacheFallbackTemplate(this.themeDir);

@@ -52,8 +52,7 @@ export default class StuartProjectBuild {
       return this.results;
     }
 
-    const pagesPath = path.join(StuartProject.Instance.projectDirectory, "pages");
-    const pages = await readDirectoryRecursively(pagesPath);
+    const pages = await readDirectoryRecursively(StuartProject.Instance.paths.pages);
 
     await this.ensureBuildDirectoryExists();
     await this.copyStaticThemeContent();
@@ -85,9 +84,8 @@ export default class StuartProjectBuild {
   }
 
   private async copyStaticThemeContent(): Promise<void> {
-    const projectDirectory = StuartProject.Instance.projectDirectory;
     const currentTheme = StuartProject.Instance.configs?.project_definition?.theme as string;
-    const originPath = path.join(projectDirectory, "themes", currentTheme, "static");
+    const originPath = path.join(StuartProject.Instance.paths.themes, currentTheme, "static");
 
     this.logger.logVerbose("Copying static content from theme directory");
 

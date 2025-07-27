@@ -1,5 +1,4 @@
 import fs from "fs/promises";
-import { join } from "path";
 import StuartProject, { StuartProjectConfig } from ".";
 import ConfigFile from "../../helpers/ConfigFile";
 import getAbsolutePath from "../../helpers/get-absolute-path";
@@ -25,11 +24,10 @@ export default class StuartProjectManager {
   public static async loadProject(directory: string): Promise<boolean> {
     // TODO: check if the directory is a valid Stuart project directory
     const project = StuartProject.Instance;
-    project.projectDirectory = directory;
+    const configFilePath = `${directory}/stuart.conf`;
     try {
-      const configFilePath = `${directory}/stuart.conf`;
       const configs = await ConfigFile.read(configFilePath);
-      project.init(configs as StuartProjectConfig);
+      project.init(directory, configs as StuartProjectConfig);
       return true;
     } catch (error) {
       return false;
@@ -45,7 +43,7 @@ export default class StuartProjectManager {
 
   // TODO: improve method for nested categories and cache
   public static async getCategories(): Promise<string[]> {
-    const dirents = await fs.readdir(join(StuartProject.Instance.projectDirectory, "pages"), {
+    const dirents = await fs.readdir(StuartProject.Instance.paths.pages, {
       withFileTypes: true,
     });
     return dirents.filter((dirent) => dirent.isDirectory()).map((dirent) => dirent.name);

@@ -32,7 +32,7 @@ export default abstract class StuartBaseGenerator {
   protected async verifyPageExists(pagePath: string): Promise<void> {
     if (this.options.force) return;
 
-    const fullPath = join(StuartProject.Instance.projectDirectory, "pages", pagePath);
+    const fullPath = join(StuartProject.Instance.paths.pages, pagePath);
     this.logger.logDebug(`Looking for page: ${pagePath}`);
 
     try {
