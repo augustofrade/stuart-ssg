@@ -1,6 +1,6 @@
 {
   "name": "stuart-ssg",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Stuart Static Site Generator",
   "scripts": {
     "ts": "ts-node src/index.ts",

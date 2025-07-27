@@ -12,7 +12,6 @@ import {
   StuartSchematic,
 } from "../core/StuartProject/schematic/types";
 import StuartProjectManager from "../core/StuartProject/StuartProjectManager";
-import getAbsolutePath from "../helpers/get-absolute-path";
 
 interface PageDetailsPromptResponse {
   title: string;
@@ -30,7 +29,7 @@ export interface GenerateCommandArgs {
 export default async function generateCommand(args: ArgumentsCamelCase<GenerateCommandArgs>) {
   const logger = BobLogger.Instance;
 
-  const projectDirectory = getAbsolutePath("website");
+  const projectDirectory = process.cwd();
   const validDirectory = await StuartProjectManager.loadProject(projectDirectory);
   if (!validDirectory) {
     console.log(chalk.red("This command can only be used in a valid Stuart Project directory.\n"));
