@@ -7,7 +7,7 @@ import BobLogger from "../../../BobLogger";
 import StuartProjectManager from "../../StuartProjectManager";
 import { StuartGenerateDefinition, StuartGenerateOptions, StuartSchematic } from "../types";
 
-export default abstract class BaseSchematicGenerator {
+export default abstract class StuartBaseGenerator {
   protected readonly logger = BobLogger.Instance;
   protected abstract type: StuartSchematic;
 
@@ -23,7 +23,7 @@ export default abstract class BaseSchematicGenerator {
   protected readonly slugify = slugify;
 
   protected async handleSchematicContent(replaceValues: Record<string, any>) {
-    const schematicDir = join(BaseSchematicGenerator.SCHEMATICS_DIR, this.type + ".md");
+    const schematicDir = join(StuartBaseGenerator.SCHEMATICS_DIR, this.type + ".md");
     let template = await fs.readFile(schematicDir, "utf8");
     template = replaceAll(template, replaceValues);
     return template;

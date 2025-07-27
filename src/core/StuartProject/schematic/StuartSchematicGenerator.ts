@@ -1,6 +1,6 @@
 import { availableSchematics } from "./schematics-list";
-import ArchiveSchematicGenerator from "./strategies/ArchiveSchematicGenerator";
-import PageSchematicGenerator from "./strategies/PageSchematicGenerator";
+import ArchiveGenerator from "./strategies/ArchiveGenerator";
+import PageGenerator from "./strategies/PageGenerator";
 import { StuartGenerateDefinition, StuartGenerateOptions, StuartSchematic } from "./types";
 
 export default class StuartSchematicGenerator {
@@ -14,9 +14,9 @@ export default class StuartSchematicGenerator {
     }
 
     if (schematic === "archive") {
-      return new ArchiveSchematicGenerator(options).handle(definition);
+      return new ArchiveGenerator(options).handle(definition);
     }
 
-    return new PageSchematicGenerator(options).handle(definition);
+    return new PageGenerator(options).handle(definition);
   }
 }

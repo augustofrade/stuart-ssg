@@ -3,9 +3,9 @@ import { join } from "path";
 import StuartProject from "../..";
 import getArgvString from "../../../../helpers/get-argv-string";
 import { StuartGenerateDefinition, StuartSchematic } from "../types";
-import BaseSchematicGenerator from "./BaseSchematicGenerator";
+import StuartBaseGenerator from "./StuartBaseGenerator";
 
-export default class PageSchematicGenerator extends BaseSchematicGenerator {
+export default class PageGenerator extends StuartBaseGenerator {
   protected type: StuartSchematic = "page";
 
   public async handle(definition: StuartGenerateDefinition): Promise<string> {
