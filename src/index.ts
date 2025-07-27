@@ -81,6 +81,12 @@ yargs(hideBin(process.argv))
             "The category of the generated file (e.g., 'blog', 'portfolio'). This will determine the directory structure.\n" +
             "If not provided, the default category will be used, meaning that the page will be saved in the root pages folder.",
           type: "string",
+        })
+        .option("force", {
+          alias: "f",
+          describe: "Force overwrite of existing files",
+          type: "boolean",
+          default: false,
         });
     },
     handler: generateCommand,

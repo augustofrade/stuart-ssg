@@ -7,8 +7,12 @@ export interface StuartSchematicDetails {
 
 export type StuartSchematicCollection = Record<StuartSchematic, StuartSchematicDetails>;
 
-export type CreateSchematicOptions = {
+export interface StuartGenerateDefinition {
   title: string;
   description?: string;
   category?: string;
-};
+}
+
+export interface StuartGenerateOptions {
+  force: boolean;
+}

@@ -6,7 +6,11 @@ import schematicsList, {
   availableSchematics,
 } from "../core/StuartProject/schematic/schematics-list";
 import StuartSchematicGenerator from "../core/StuartProject/schematic/StuartSchematicGenerator";
-import { CreateSchematicOptions, StuartSchematic } from "../core/StuartProject/schematic/types";
+import {
+  StuartGenerateDefinition,
+  StuartGenerateOptions,
+  StuartSchematic,
+} from "../core/StuartProject/schematic/types";
 import StuartProjectManager from "../core/StuartProject/StuartProjectManager";
 import getAbsolutePath from "../helpers/get-absolute-path";
 
@@ -20,6 +24,7 @@ export interface GenerateCommandArgs {
   title?: string;
   description?: string;
   category?: string;
+  force?: boolean; // Yargs requires it to be optional
 }
 
 export default async function generateCommand(args: ArgumentsCamelCase<GenerateCommandArgs>) {
@@ -44,14 +49,18 @@ export default async function generateCommand(args: ArgumentsCamelCase<GenerateC
     process.exit(1);
   }
 
-  const options: CreateSchematicOptions = {
+  const definition: StuartGenerateDefinition = {
     title: pageDetails.title,
     description: pageDetails.description,
     category: args.category,
   };
 
-  logger.logInfo(`Generating schematic: ${args.schematic} with options`);
-  Object.entries(options).forEach(([key, value]) => {
+  const options: StuartGenerateOptions = {
+    force: args.force!,
+  };
+
+  logger.logInfo(`Generating schematic: ${args.schematic} with definition`);
+  Object.entries(definition).forEach(([key, value]) => {
     console.log(`  ${key}: ${value ?? chalk.italic("not provided")}`);
   });
   console.log("\n");
@@ -59,6 +68,7 @@ export default async function generateCommand(args: ArgumentsCamelCase<GenerateC
   try {
     const result = await StuartSchematicGenerator.generate(
       args.schematic as StuartSchematic,
+      definition,
       options
     );
     console.log(chalk.green(`Schematic generated successfully at ${result}`));
