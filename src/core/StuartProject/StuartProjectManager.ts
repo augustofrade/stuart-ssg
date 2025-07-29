@@ -1,6 +1,6 @@
-import fs from "fs/promises";
 import StuartProject, { StuartProjectConfig } from ".";
 import ConfigFile from "../../helpers/ConfigFile";
+import FSTree from "../../helpers/FSTree";
 import getAbsolutePath from "../../helpers/get-absolute-path";
 import BobLogger from "../BobLogger";
 import StuartProjectBuild, { BuildResults } from "./handlers/project-build";
@@ -41,12 +41,9 @@ export default class StuartProjectManager {
     return new StuartProjectCreate(options).handle();
   }
 
-  // TODO: improve method for nested categories and cache
   public static async getCategories(): Promise<string[]> {
-    const dirents = await fs.readdir(StuartProject.Instance.paths.pages, {
-      withFileTypes: true,
-    });
-    return dirents.filter((dirent) => dirent.isDirectory()).map((dirent) => dirent.name);
+    const directories = await FSTree.directories(StuartProject.Instance.paths.pages);
+    return directories;
   }
 
   /**
