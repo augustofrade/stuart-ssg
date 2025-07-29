@@ -2,7 +2,7 @@ import chalk from "chalk";
 import fs from "fs/promises";
 import path from "path";
 import StuartProject from "..";
-import readDirectoryRecursively from "../../../helpers/readDirectoryRecursively";
+import FSTree from "../../../helpers/FSTree";
 import BobLogger from "../../BobLogger";
 import StuartPage from "../page/StuartPage";
 import StuartThemeManager from "../theme/StuartThemeManager";
@@ -52,7 +52,7 @@ export default class StuartProjectBuild {
       return this.results;
     }
 
-    const pages = await readDirectoryRecursively(StuartProject.Instance.paths.pages);
+    const pages = await FSTree.files(StuartProject.Instance.paths.pages);
 
     await this.ensureBuildDirectoryExists();
     await this.copyStaticThemeContent();
