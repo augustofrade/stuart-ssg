@@ -4,7 +4,6 @@ import StuartProject from "../..";
 import replaceAll from "../../../../helpers/replace-all";
 import slugify from "../../../../helpers/slugify";
 import BobLogger from "../../../BobLogger";
-import StuartProjectManager from "../../StuartProjectManager";
 import { StuartGenerateDefinition, StuartGenerateOptions, StuartSchematic } from "../types";
 
 export default abstract class StuartBaseGenerator {
@@ -50,7 +49,7 @@ export default abstract class StuartBaseGenerator {
       return;
     }
 
-    const categories = await StuartProjectManager.getCategories();
+    const categories = await StuartProject.Instance.getCategories();
     if (!categories.includes(category)) {
       throw new Error(
         `Invalid category: ${category}.\nAvailable categories: ${categories.join(", ")}`

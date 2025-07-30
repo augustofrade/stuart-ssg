@@ -1,6 +1,5 @@
 import StuartProject, { StuartProjectConfig } from ".";
 import ConfigFile from "../../helpers/ConfigFile";
-import FSTree from "../../helpers/FSTree";
 import getAbsolutePath from "../../helpers/get-absolute-path";
 import BobLogger from "../BobLogger";
 import StuartProjectBuild, { BuildResults } from "./handlers/project-build";
@@ -39,11 +38,6 @@ export default class StuartProjectManager {
    */
   public static async create(options: CreateStuartProjectOptions): Promise<boolean> {
     return new StuartProjectCreate(options).handle();
-  }
-
-  public static async getCategories(): Promise<string[]> {
-    const directories = await FSTree.directories(StuartProject.Instance.paths.pages);
-    return directories;
   }
 
   /**

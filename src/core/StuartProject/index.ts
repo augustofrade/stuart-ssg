@@ -1,3 +1,4 @@
+import FSTree from "../../helpers/FSTree";
 import { ResourceConfig, ResourceConfigSection } from "../../types/resource-config.type";
 import BobLogger from "../BobLogger";
 import StuartProjectPaths from "./StuartProjectPaths";
@@ -8,6 +9,8 @@ import StuartProjectPaths from "./StuartProjectPaths";
 export default class StuartProject {
   private static readonly logger = BobLogger.Instance;
   private _paths: StuartProjectPaths = new StuartProjectPaths("");
+  private _categories: string[] = [];
+
   private static instance: StuartProject;
 
   public initialized = false;
@@ -27,6 +30,22 @@ export default class StuartProject {
     this.configs = configs;
     this.initialized = true;
     return this;
+  }
+
+  public getCategories(): Promise<string[]> {
+    if (!this.initialized) {
+      throw new Error("Stuart Project is not initialized.");
+    }
+
+    return new Promise(async (resolve, reject) => {
+      if (this._categories.length > 0) {
+        resolve(this._categories);
+      }
+
+      const dirs = await FSTree.directories(StuartProject.Instance.paths.pages);
+      this._categories = dirs;
+      resolve(dirs);
+    });
   }
 
   public get paths(): StuartProjectPaths {

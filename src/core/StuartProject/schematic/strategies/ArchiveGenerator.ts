@@ -2,7 +2,6 @@ import fs from "fs/promises";
 import { join } from "path";
 import StuartProject from "../..";
 import getArgvString from "../../../../helpers/get-argv-string";
-import StuartProjectManager from "../../StuartProjectManager";
 import { StuartGenerateDefinition, StuartSchematic } from "../types";
 import StuartBaseGenerator from "./StuartBaseGenerator";
 
@@ -27,7 +26,7 @@ export default class ArchiveGenerator extends StuartBaseGenerator {
 
     const newCategoryProjectPath = join(definition.category ?? "", newCategoryName);
     // TODO: make a better way to handle directories as this wont handle nested directories
-    if (!(await StuartProjectManager.getCategories()).includes(newCategoryProjectPath)) {
+    if (!(await StuartProject.Instance.getCategories()).includes(newCategoryProjectPath)) {
       await fs.mkdir(join(StuartProject.Instance.paths.pages, newCategoryProjectPath), {
         recursive: true,
       });
