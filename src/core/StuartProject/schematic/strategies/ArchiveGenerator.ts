@@ -25,7 +25,6 @@ export default class ArchiveGenerator extends StuartBaseGenerator {
     let dir = join("pages", filePath);
 
     const newCategoryProjectPath = join(definition.category ?? "", newCategoryName);
-    // TODO: make a better way to handle directories as this wont handle nested directories
     if (!(await StuartProject.Instance.getCategories()).includes(newCategoryProjectPath)) {
       await fs.mkdir(join(StuartProject.Instance.paths.pages, newCategoryProjectPath), {
         recursive: true,

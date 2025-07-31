@@ -1,7 +1,5 @@
 import chalk from "chalk";
-import { existsSync } from "fs";
 import inquirer from "inquirer";
-import { join } from "path";
 import { ArgumentsCamelCase } from "yargs";
 import StuartProjectManager from "../core/StuartProject/StuartProjectManager";
 import getAbsolutePath from "../helpers/get-absolute-path";
@@ -20,11 +18,6 @@ export default async function newCommand(args: ArgumentsCamelCase<NewCommandArgs
     ? getAbsolutePath(args.directory)
     : getAbsolutePath(sanitizeDirName(projectName));
 
-  if (existsSync(join(projectDirectory, "stuart.conf"))) {
-    console.log(chalk.red(`A project already exists at "${projectDirectory}".`));
-    return;
-  }
-
   const success = await StuartProjectManager.create({
     projectName,
     projectDirectory,
@@ -33,7 +26,7 @@ export default async function newCommand(args: ArgumentsCamelCase<NewCommandArgs
   });
 
   if (!success) {
-    return console.log(chalk.red("\nCancelling project creation operation."));
+    process.exit(1);
   }
 
   console.log(chalk.green(`\nProject "${projectName}" created successfully!`));

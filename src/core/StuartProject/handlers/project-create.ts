@@ -38,6 +38,9 @@ export default class StuartProjectCreate {
     const { projectDirectory, theme, blueprint } = this.options;
 
     try {
+      await this.verifyTargetDirectory();
+      this.logger.logInfo(`Valid target directory`);
+
       await this.createProjectDirectory();
       this.logger.logInfo(`Creating project directory at ${projectDirectory}`);
 
@@ -55,10 +58,27 @@ export default class StuartProjectCreate {
   }
 
   /**
+   * Verifies whether the target directory exists and is empty.
+   *
+   * A valid directory must not contain any files.
+   */
+  private async verifyTargetDirectory(): Promise<void> {
+    const { projectDirectory } = this.options;
+    if (!existsSync(projectDirectory)) return;
+
+    const files = await fs.readdir(projectDirectory);
+    if (files.length === 0) return;
+
+    if (files.includes("stuart.conf")) {
+      throw new Error(`A Stuart project already exists at "${projectDirectory}".`);
+    }
+    throw new Error(`Directory "${projectDirectory}" is not empty.`);
+  }
+
+  /**
    * Creates the project directory.
    */
   private async createProjectDirectory(): Promise<void> {
-    // TODO: change the name of the method and verify whether the directory is empty
     await fs.mkdir(path.join(this.options.projectDirectory, "pages"), { recursive: true });
   }
 
