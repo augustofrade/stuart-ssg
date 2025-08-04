@@ -44,8 +44,14 @@ export default abstract class StuartBaseGenerator {
     }
   }
 
-  protected async verifyCategory(category: string | undefined): Promise<void> {
+  protected async verifyCategory(
+    category: string | undefined,
+    required: boolean = false
+  ): Promise<void> {
     if (!category) {
+      if (required) {
+        throw new Error("Category is required. Please provide a valid category for the page.");
+      }
       return;
     }
 

@@ -15,7 +15,7 @@ import StuartProjectManager from "../core/StuartProject/StuartProjectManager";
 
 interface PageDetailsPromptResponse {
   title: string;
-  description: string;
+  description?: string;
 }
 
 export interface GenerateCommandArgs {
@@ -100,12 +100,12 @@ function validateSchematic(schematic: string | undefined): schematic is StuartSc
   return false;
 }
 
-function promptOrSkipIfProvided<T>(
-  expectedValue: T | undefined,
+function promptOrSkipIfProvided(
+  expectedValue: string | undefined,
   message: string,
   required = false
-): Promise<T> {
-  if (expectedValue !== undefined) {
+): Promise<string> {
+  if (expectedValue !== undefined && expectedValue !== "") {
     return Promise.resolve(expectedValue);
   }
   return inquirer
@@ -123,18 +123,18 @@ function promptOrSkipIfProvided<T>(
 async function promptPageDetails(
   args: ArgumentsCamelCase<GenerateCommandArgs>
 ): Promise<PageDetailsPromptResponse> {
-  const pageTitle = await promptOrSkipIfProvided<string>(
+  const pageTitle = await promptOrSkipIfProvided(
     args.title,
     "Enter the title of the new page",
     true
   );
-  const pageDescription = await promptOrSkipIfProvided<string>(
+  const pageDescription = await promptOrSkipIfProvided(
     args.description,
     "Enter a description for the new page"
   );
 
   return {
     title: pageTitle,
-    description: pageDescription,
+    description: pageDescription.length > 0 ? pageDescription : undefined,
   };
 }
