@@ -9,4 +9,4 @@ page_type=single
 
 ## %PAGE_TITLE%
 
-Page created using `%COMMAND%`
+Page created using `%GENERATION_COMMAND%`
