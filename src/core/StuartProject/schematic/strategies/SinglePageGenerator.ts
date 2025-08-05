@@ -10,6 +10,10 @@ export default class SinglePageGenerator extends StuartBaseGenerator {
 
   public async handle(definition: StuartGenerateDefinition): Promise<string> {
     await this.verifyCategory(definition.category, true);
+
+    const projectPagePath = join(definition.category!, this.slugify(definition.title) + ".md");
+    await this.verifyPageExists(projectPagePath);
+
     const category = definition.category!.replace(/-\//g, " ").toLocaleUpperCase();
 
     const template = await this.handleSchematicContent({
@@ -19,14 +23,9 @@ export default class SinglePageGenerator extends StuartBaseGenerator {
       generation_command: getArgvString(),
     });
 
-    const filename = this.slugify(definition.title);
-    const filePath = join(
-      StuartProject.Instance.paths.pages,
-      definition.category ?? "",
-      filename + ".md"
-    );
+    const fullFilePath = join(StuartProject.Instance.paths.pages, projectPagePath);
 
-    await fs.writeFile(filePath, template, "utf8");
-    return filePath;
+    await fs.writeFile(fullFilePath, template, "utf8");
+    return fullFilePath;
   }
 }

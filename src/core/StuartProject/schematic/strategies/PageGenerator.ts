@@ -9,23 +9,21 @@ export default class PageGenerator extends StuartBaseGenerator {
   protected type: StuartSchematic = "page";
 
   public async handle(definition: StuartGenerateDefinition): Promise<string> {
-    await this.verifyCategory(definition.category);
+    await this.verifyCategory(definition.category, true);
+
+    const projectPagePath = join(definition.category ?? "", this.slugify(definition.title) + ".md");
+    await this.verifyPageExists(projectPagePath);
 
     const template = await this.handleSchematicContent({
       page_title: definition.title.toUpperCase(),
-      page_description: definition.description ?? "No description provided",
+      page_description: definition.description ?? "Made with Stuart",
       page_category: this.slugify(definition.category ?? ""),
       generation_command: getArgvString(),
     });
 
-    const filename = this.slugify(definition.title);
-    const filePath = join(
-      StuartProject.Instance.paths.pages,
-      definition.category ?? "",
-      filename + ".md"
-    );
+    const fullFilePath = join(StuartProject.Instance.paths.pages, projectPagePath);
 
-    await fs.writeFile(filePath, template, "utf8");
-    return filePath;
+    await fs.writeFile(fullFilePath, template, "utf8");
+    return fullFilePath;
   }
 }

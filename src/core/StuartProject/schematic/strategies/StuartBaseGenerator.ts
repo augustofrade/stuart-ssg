@@ -36,7 +36,7 @@ export default abstract class StuartBaseGenerator {
 
     try {
       await fs.stat(fullPath);
-      throw new Error(`Page already exists: ${pagePath}`);
+      throw new Error(`Can't create page. Page already exists at: ${pagePath}`);
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
         throw error;

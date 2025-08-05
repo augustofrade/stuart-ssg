@@ -73,7 +73,7 @@ export default async function generateCommand(args: ArgumentsCamelCase<GenerateC
     );
     console.log(chalk.green(`Schematic generated successfully at ${result}`));
   } catch (error) {
-    console.log(chalk.red(`Failed to generate schematic.\n\n${(error as Error).message}`));
+    console.log(chalk.red(`Failed to generate with schematic.\n${(error as Error).message}`));
     process.exit(1);
   }
 }

@@ -17,7 +17,7 @@ export default class ArchiveGenerator extends StuartBaseGenerator {
 
     const template = await this.handleSchematicContent({
       page_title: definition.title.toUpperCase(),
-      page_description: definition.description ?? "No description provided",
+      page_description: definition.description ?? "Made with Stuart",
       page_category: newCategoryName,
       generation_command: getArgvString(),
     });
