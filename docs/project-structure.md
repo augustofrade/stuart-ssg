@@ -78,7 +78,7 @@ Structure of a published Stuart Project
     page-1/
       index.html
 
-    assets/
+    static/
       image-1.jpg
   ...
 ```
