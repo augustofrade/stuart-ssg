@@ -1,0 +1,27 @@
+{
+  "name": "stuart-ssg",
+  "version": "0.0.1",
+  "description": "Stuart is a Static Site Generator that lets you write markdown documents and convert them into fully-fledged static websites.",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/augustofrade/stuart-ssg.git"
+  },
+  "keywords": [],
+  "author": "augustofrade",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/augustofrade/stuart-ssg/issues"
+  },
+  "homepage": "https://github.com/augustofrade/stuart-ssg#readme",
+  "workspaces": [
+    "packages/lib",
+    "packages/cli"
+  ],
+  "devDependencies": {
+    "prettier": "3.8.1",
+    "typescript": "^6.0.2"
+  }
+}

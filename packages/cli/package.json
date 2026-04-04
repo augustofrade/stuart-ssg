@@ -1,0 +1,20 @@
+{
+  "name": "@stuart-ssg/cli",
+  "version": "0.0.1",
+  "description": "Stuart SSG CLI tool for generating static sites from markdown documents",
+  "main": "dist/index.js",
+  "scripts": {},
+  "author": "augustofrade",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/augustofrade/stuart-ssg.git"
+  },
+  "bugs": {
+    "url": "https://github.com/augustofrade/stuart-ssg/issues"
+  },
+  "homepage": "https://github.com/augustofrade/stuart-ssg#readme",
+  "dependencies": {
+    "@stuart-ssg/lib": "^0.0.1"
+  }
+}
