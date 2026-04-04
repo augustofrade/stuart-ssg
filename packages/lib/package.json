@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Stuart SSG Library with API and Core functionalities for generating static sites from markdown documents",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {},
   "author": "augustofrade",
   "license": "ISC",
