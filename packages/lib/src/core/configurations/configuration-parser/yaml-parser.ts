@@ -14,10 +14,10 @@ export class YamlParser implements ConfigurationParser {
    * @throws ConfigurationParsingError if configuration data is invalid
    * @param rawContent
    */
-  public parse(rawContent: string): Configuration {
+  public parse<T = Configuration>(rawContent: string): T {
     try {
       const data = yaml.load(rawContent.trim()) as Configuration;
-      return data;
+      return data as T;
     } catch (e) {
       const yamlError = e as YAMLException;
       const line = yamlError.mark.line + 1;
