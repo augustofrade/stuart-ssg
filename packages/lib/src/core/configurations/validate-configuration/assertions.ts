@@ -1,5 +1,5 @@
-import { isValidDate } from "shared/is-valid-date";
-import { isValidDateString } from "shared/is-valid-date-string";
+import { isValidDate } from "../../../shared/is-valid-date";
+import { isValidDateString } from "../../../shared/is-valid-date-string";
 import { ConfigurationValidationError } from "./errors";
 
 function throwTypeError(key: string, expectedType: string, propValueType: string) {

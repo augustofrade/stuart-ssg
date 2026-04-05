@@ -1,10 +1,10 @@
+import { PageFrontmatter } from "..";
 import {
   assertDateProp,
   assertNotNullProp,
   assertStringProp,
   validateConfiguration,
-} from "core/configurations/validate-configuration";
-import { PageFrontmatter } from "..";
+} from "../../configurations/validate-configuration";
 
 /**
  * Validates the frontmatter properties of a page.
