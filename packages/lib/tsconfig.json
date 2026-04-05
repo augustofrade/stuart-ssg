@@ -3,10 +3,9 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "baseUrl": "src",
     "paths": {
-      "core/*": ["core/*"],
-      "shared/*": ["shared/*"],
+      "core/*": ["./src/core/*"],
+      "shared/*": ["./src/shared/*"],
 
     }
   },
