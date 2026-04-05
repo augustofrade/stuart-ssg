@@ -26,7 +26,7 @@ Themes are HTML files containing content interpolation keys for token injection 
 
 Themes are, in essence, composed by a [`themeconf.yaml`](#themeconfyaml) file. This YAML file defiens the directory it is in as the **Theme Root**.
 
-Projects can have any amount of installed themes; however, **use only one (1) or none at a time during development and build**. This means themes are optional.
+Projects can have any amount of installed themes; however, **use only one (1) theme at a time during development and build**.
 
 Themes are located in the `themes/` directory of the project root:
 
