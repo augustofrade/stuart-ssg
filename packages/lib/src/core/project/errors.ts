@@ -2,7 +2,7 @@ import { Files } from "../files";
 
 export class ProjectConfigurationNotFoundError extends Error {
   constructor(directory: string) {
-    super(`${Files.PROJECT_CONF} not found. Searched for in ${directory}`);
+    super(`${Files.PROJECT_CONF} not found. Searched for ${directory}`);
     this.name = "ProjectConfigurationNotFoundError";
   }
 }
