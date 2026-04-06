@@ -1,5 +1,6 @@
 import yaml, { YAMLException } from "js-yaml";
-import { ConfigurationParsingError } from "./errors";
+import { isEmptyString } from "../../../shared/is-empty-string";
+import { ConfigurationParsingError, EmptyConfigurationError } from "./errors";
 import { Configuration, ConfigurationParser } from "./types";
 
 /**
@@ -15,6 +16,9 @@ export class YamlParser implements ConfigurationParser {
    * @param rawContent
    */
   public parse<T = Configuration>(rawContent: string): T {
+    rawContent = rawContent.trim();
+    if (isEmptyString(rawContent)) throw new EmptyConfigurationError();
+
     try {
       const data = yaml.load(rawContent.trim()) as Configuration;
       return data as T;
@@ -22,7 +26,7 @@ export class YamlParser implements ConfigurationParser {
       const yamlError = e as YAMLException;
       const line = yamlError.mark.line + 1;
       const text = yamlError.mark.snippet;
-      throw new ConfigurationParsingError(`Malformed YAML syntax in line ${line}:\n${text}`);
+      throw new ConfigurationParsingError(line, text);
     }
   }
 }
