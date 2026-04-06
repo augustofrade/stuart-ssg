@@ -3,7 +3,7 @@ import {
   assertStringProp,
   validateConfiguration,
 } from "../../configurations/validate-configuration";
-import { ProjectConfiguration } from "../types";
+import { ParsedProjectData } from "../project-configuration-parser";
 
 /**
  * Validates the configuration properties of a Project.
@@ -17,18 +17,18 @@ import { ProjectConfiguration } from "../types";
  * - `author`: Must be a non-null string
  * - `theme`: Must be a non-null string
  */
-export function validateProjectConfiguration(configuration: ProjectConfiguration) {
+export function validateProjectConfiguration(data: ParsedProjectData) {
   validateConfiguration({
     name: {
-      value: configuration.project.name,
+      value: data.configuration.name,
       validators: [assertNotNullProp, assertStringProp],
     },
     author: {
-      value: configuration.project.author,
+      value: data.configuration.author,
       validators: [assertNotNullProp, assertStringProp],
     },
     theme: {
-      value: configuration.project.theme,
+      value: data.configuration.theme,
       validators: [assertNotNullProp, assertStringProp],
     },
   });

@@ -1,3 +1,4 @@
+import { isObject } from "../../../shared/is-object";
 import { isValidDate } from "../../../shared/is-valid-date";
 import { isValidDateString } from "../../../shared/is-valid-date-string";
 import { ConfigurationValidationError } from "./errors";
@@ -43,4 +44,13 @@ export function assertDateProp(key: string, propValue?: unknown) {
 
   if (!isValidDate(propValue as string))
     throwTypeError(key, "YYYY-MM-DD date or YYYY-MM-DD HH:mm:SS datetime", "unknown");
+}
+
+export function assertIsObjectProp(key: string, expectedType: string, propValue?: unknown) {
+  if (!isObject(propValue)) throwTypeError(key, expectedType, typeof propValue);
+}
+
+export function assertIsNullableObjectProp(key: string, propValue?: unknown) {
+  if (propValue !== null && propValue !== undefined && !isObject(propValue))
+    throwTypeError(key, "record", typeof propValue);
 }

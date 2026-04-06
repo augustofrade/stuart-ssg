@@ -1,20 +1,21 @@
 import { YamlParser } from "../../configurations/configuration-parser";
-import { ProjectConfiguration } from "../types";
+import {
+  assertIsNullableObjectProp,
+  assertIsObjectProp,
+} from "../../configurations/validate-configuration/assertions";
 import { ProjectConfigurationParsingError } from "./errors";
+import { ParsedProjectData, UnknownProjectData } from "./types";
 
 export class ProjectConfigurationParser {
-  public parse(rawProjectConfiguration: string): ProjectConfiguration {
+  public parse(rawProjectConfiguration: string): ParsedProjectData {
     try {
-      const result = new YamlParser().parse<ProjectConfiguration>(rawProjectConfiguration.trim());
+      const result = new YamlParser().parse<UnknownProjectData>(rawProjectConfiguration.trim());
+      assertIsObjectProp("project", "ProjectConfiguration", result.project);
+      assertIsNullableObjectProp("props", result.props);
 
-      // Ensure that only data defined in these keys are used and available
       return {
-        project: {
-          name: result.project.name,
-          author: result.project.author,
-          theme: result.project.theme,
-        },
-        props: result.props,
+        configuration: result.project,
+        props: result?.props ?? {},
       };
     } catch (e) {
       throw new ProjectConfigurationParsingError((e as Error).message);
