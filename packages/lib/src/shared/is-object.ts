@@ -1,3 +1,5 @@
+import { getTypeName } from "./get-type-name";
+
 export function isObject(value: any) {
-  return Object.prototype.toString.call(value) === "[object Object]";
+  return getTypeName(value) === "object";
 }

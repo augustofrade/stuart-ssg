@@ -1,3 +1,4 @@
+import { getTypeName } from "../../../shared/get-type-name";
 import { isObject } from "../../../shared/is-object";
 import { isValidDate } from "../../../shared/is-valid-date";
 import { isValidDateString } from "../../../shared/is-valid-date-string";
@@ -47,10 +48,10 @@ export function assertDateProp(key: string, propValue?: unknown) {
 }
 
 export function assertIsObjectProp(key: string, expectedType: string, propValue?: unknown) {
-  if (!isObject(propValue)) throwTypeError(key, expectedType, typeof propValue);
+  if (!isObject(propValue)) throwTypeError(key, expectedType, getTypeName(propValue));
 }
 
 export function assertIsNullableObjectProp(key: string, propValue?: unknown) {
   if (propValue !== null && propValue !== undefined && !isObject(propValue))
-    throwTypeError(key, "record", typeof propValue);
+    throwTypeError(key, "record", getTypeName(propValue));
 }
