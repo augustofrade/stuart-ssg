@@ -1,7 +1,7 @@
 import { YamlParser } from "../../configurations/configuration-parser";
 import {
   assertIsNullableObjectProp,
-  assertIsObjectProp,
+  assertObjectProp,
 } from "../../configurations/validate-configuration/assertions";
 import { ProjectConfigurationParsingError } from "./errors";
 import { ParsedProjectData, UnknownProjectData } from "./types";
@@ -10,7 +10,7 @@ export class ProjectConfigurationParser {
   public parse(rawProjectConfiguration: string): ParsedProjectData {
     try {
       const result = new YamlParser().parse<UnknownProjectData>(rawProjectConfiguration.trim());
-      assertIsObjectProp("project", "ProjectConfiguration", result.project);
+      assertObjectProp("project", "ProjectConfiguration", result.project);
       assertIsNullableObjectProp("props", result.props);
 
       return {

@@ -29,6 +29,7 @@ export function assertNotNullProp(key: string, propValue: unknown) {
  * @throws {Error} Throws a type error if propValue is not a string.
  */
 export function assertStringProp(key: string, propValue: unknown) {
+  if (propValue === undefined) return;
   const propValueType = typeof propValue;
   if (propValueType !== "string") throwTypeError(key, "string", propValueType);
 }
@@ -47,7 +48,7 @@ export function assertDateProp(key: string, propValue?: unknown) {
     throwTypeError(key, "YYYY-MM-DD date or YYYY-MM-DD HH:mm:SS datetime", "unknown");
 }
 
-export function assertIsObjectProp(key: string, expectedType: string, propValue?: unknown) {
+export function assertObjectProp(key: string, expectedType: string, propValue?: unknown) {
   if (!isObject(propValue)) throwTypeError(key, expectedType, getTypeName(propValue));
 }
 

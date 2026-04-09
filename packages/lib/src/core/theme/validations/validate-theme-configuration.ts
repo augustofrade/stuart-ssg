@@ -3,7 +3,7 @@ import {
   assertStringProp,
   validateConfiguration,
 } from "../../configurations/validate-configuration";
-import { assertIsObjectProp } from "../../configurations/validate-configuration/assertions";
+import { assertObjectProp } from "../../configurations/validate-configuration/assertions";
 import { UnknownThemeConfiguration } from "../theme-configuration-parser/types";
 
 /**
@@ -36,7 +36,7 @@ export function validateThemeConfiguration(data: UnknownThemeConfiguration) {
       value: data.author,
       validators: [
         assertNotNullProp,
-        (key: string, propValue?: unknown) => assertIsObjectProp(key, "ThemeAuthor", propValue),
+        (key: string, propValue?: unknown) => assertObjectProp(key, "ThemeAuthor", propValue),
       ],
     },
     "author.name": {
