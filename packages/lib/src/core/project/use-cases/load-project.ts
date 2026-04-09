@@ -1,7 +1,9 @@
 import { existsSync } from "fs";
 import fs from "fs/promises";
 import path from "path";
+import { Directories } from "../../directories";
 import { Files } from "../../files";
+import { LoadTheme, StuartTheme } from "../../theme";
 import { ProjectConfigurationNotFoundError } from "../errors";
 import { ProjectConfigurationParser } from "../project-configuration-parser";
 import { StuartProject } from "../stuart-project";
@@ -36,7 +38,23 @@ export class LoadProject {
     // Project data is valid from now onwards
     const projectData = parsedProjectData as unknown as ProjectData;
 
-    return new StuartProject(projectRoot, projectData);
+    const themes = await this.loadInstalledThemes(projectRoot);
+
+    return new StuartProject(projectRoot, projectData, themes);
+  }
+  private static async loadInstalledThemes(projectRoot: string): Promise<StuartTheme[]> {
+    // remove file from path and move inside themes folder
+    projectRoot = path.join(path.dirname(projectRoot), Directories.THEMES);
+
+    const installedThemes: StuartTheme[] = [];
+
+    const themeDirs = await fs.readdir(projectRoot);
+    for (const themeDir of themeDirs) {
+      const theme = await LoadTheme.handle(path.join(projectRoot, themeDir));
+      installedThemes.push(theme);
+    }
+
+    return installedThemes;
   }
 
   private static assertConfigurationExistence(projectConfigFile: string) {
