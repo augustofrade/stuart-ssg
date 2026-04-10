@@ -4,6 +4,17 @@
 
 Parts that compose Stuart.
 
+### Content File
+
+> Not to be confused with [Project Content](#project-content).
+
+Describes and defines the role of the directory within the Project Content hierarchy.
+
+The available Content Files and roles are:
+
+- [`index.md`](#indexmd) - [Page](#page)
+- [`category.md`](#categorymd) - [Page Category](#page-category)
+
 ### Project
 
 A Stuart Project. A project is, in essence, composed by a [`stuartconf.yaml`](#stuartconfyaml) file. This YAML file defines the directory it is in as the **Project Root**.
@@ -16,9 +27,11 @@ It can also have the following directories:
 
 ### Project Content
 
+> Not to be confused with [Content File](#content-file).
+
 Main content of a Stuart Project that is written by a user.
 
-Contains only **[Stuart Pages](#page)** and **[Stuart Page Categories](#page-category)**.
+Contains only **[Stuart Pages](#page)** and **[Stuart Page Categories](#page-category)**, i.e. Contents with their respective Content Files.
 
 ### Project Theme
 
@@ -41,17 +54,49 @@ Themes are located in the `themes/` directory of the project root:
 
 ### Project Static Files
 
-Static files that [Stuart Pages](#page) have access, such as images, icons, documents etc.
+Static files that [Stuart Pages](#page) and [Stuart Page Categories](#page-category) have access, such as images, icons, documents etc.
+
+Can be accessed in markdown syntax with `~/`:
+
+```
+<page>/index.md
+The path to the author picture is {~/images/author.jpeg}
+
+Result:
+publish/<page>/index.html
+The path to the author picture is /static/images/author.jpeg
+```
+
+### Content Static Files
+
+Static files that only are accessible to the Content of the directory they are in
+
+Can be accessed in markdown syntax with `@/`:
+
+```
+<page>/index.md
+The path to my dog's image is: {@/dog.jpeg}
+
+Result:
+publish/<page>/index.html
+The path to my dog's image is: ./dog.jpeg
+```
 
 ### Page
 
 A Stuart Page.
 
-Can be created either through a [`Page Model`](#page-model) or by the user, but only written by the latter.
+Pages are a type of [Content](#project-content).
+
+Can be created either through a [`Page Model`](#page-model) or by the user, and is written by the latter.
 
 Must have an `index.md` with a valid [YAML frontmatter](https://www.markdownlang.com/advanced/frontmatter.html).
 
+Everything in its directory is marked as static content.
+
 ### Page Category
+
+Categories are a type of [Content](#project-content).
 
 Each and every name that comes before the name of a page in a directory representation.
 
@@ -84,6 +129,8 @@ The categories above can be represented as:
 - `animals`
 - `animals/cats`
 - `animals/dogs`
+
+Everything in its directory that is NOT a Page or another Page Category is marked as static content.
 
 ## Stuart Templates
 
