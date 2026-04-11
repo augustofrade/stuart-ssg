@@ -3,7 +3,15 @@ import fs from "fs/promises";
 import path from "path";
 import { Directories } from "../../directories";
 import { Files } from "../../files";
-import { ConflictingContentTypeMismatchError } from "./errors";
+import { ConflictingContentTypeMismatchError, IllegalContentTreeRootStaticContent } from "./errors";
+import { ProjectContentTree } from "./project-content-tree";
+import {
+  ContentNode,
+  ContentNodeCategory,
+  ContentNodePage,
+  ContentNodeType,
+  ProjectContentCategoriesSet,
+} from "./types";
 
 /**
  * Maps a project's content into an object tree representation.
@@ -36,7 +44,15 @@ import { ConflictingContentTypeMismatchError } from "./errors";
  *    - Throw an error due to conflicting definitions.
  */
 export class ProjectContentMapper {
-  private constructor() {}
+  private readonly contentRoot: string;
+  private readonly categoriesSet: ProjectContentCategoriesSet = {};
+
+  public constructor(projectRoot: string) {
+    if (!path.isAbsolute(projectRoot)) {
+      projectRoot = path.resolve(projectRoot);
+    }
+    this.contentRoot = path.join(projectRoot, Directories.CONTENT);
+  }
 
   /**
    * Maps a project content located in the passed projectRoot path.
@@ -44,14 +60,11 @@ export class ProjectContentMapper {
    * @param projectRoot Path to the Project Root, directory expected.
    * @returns Tree representation of the Project Content
    */
-  public static async handle(projectRoot: string) {
-    if (!path.isAbsolute(projectRoot)) {
-      projectRoot = path.resolve(projectRoot);
-    }
-    const contentRoot = path.join(projectRoot, Directories.CONTENT);
+  public async handle() {
+    const rootCategory = this.createCategory("", this.contentRoot);
+    const contentTree = await this.mapCategory(rootCategory);
 
-    const rootCategory = this.createCategory("", contentRoot);
-    return this.mapCategory(rootCategory);
+    return new ProjectContentTree(contentTree, this.categoriesSet);
   }
 
   /**
@@ -59,35 +72,40 @@ export class ProjectContentMapper {
    * @param name Name of the category (ex: blog or animals/cat)
    * @param path Root Path of the category
    */
-  private static createCategory(name: string, path: string): DirCategory {
-    return {
-      type: DirItemType.Category,
+  private createCategory(name: string, path: string): ContentNodeCategory {
+    const category: ContentNodeCategory = {
+      type: ContentNodeType.Category,
       path,
       name,
       categories: [],
       pages: [],
       staticContent: [],
     };
+
+    // Make the category accessible in a more navigable manner
+    this.categoriesSet[name] = category;
+    return category;
   }
 
   /**
    * Page Factory
    * @param path Root Path of the page
    */
-  private static createPage(path: string): DirPage {
+  private createPage(path: string): ContentNodePage {
     return {
-      type: DirItemType.Page,
+      type: ContentNodeType.Page,
       path,
       staticContent: [],
     };
   }
 
   /**
-   * Recursively maps a category directory alongisde mapDirectory,
+   * Recursively maps a category directory alongisde mapDirectory
+   * into a Content Tree representation of it,
    * filtering its content based on its type (category, page, static content)
    * @param category Category representation of a directory
    */
-  private static async mapCategory(category: DirCategory) {
+  private async mapCategory(category: ContentNodeCategory) {
     const items = await this.readDir(category.path);
     for (const item of items) {
       if (item.name === Files.CATEGORY_ROOT) continue;
@@ -97,20 +115,25 @@ export class ProjectContentMapper {
       if (item.isDirectory()) {
         const result = await this.mapDirectory(fullChildItemPath, item.name, category.name);
         switch (result?.type) {
-          case DirItemType.Page:
-            category.pages.push(result as DirPage);
+          case ContentNodeType.Page:
+            category.pages.push(result as ContentNodePage);
             break;
-          case DirItemType.Category:
-            category.categories.push(result as DirCategory);
+          case ContentNodeType.Category:
+            category.categories.push(result as ContentNodeCategory);
             break;
           default:
+            // static directories
+            this.throwIfInTreeRoot(category.name, fullChildItemPath);
             category.staticContent.push(fullChildItemPath);
         }
       } else {
+        // static files
+        this.throwIfInTreeRoot(category.name, fullChildItemPath);
         category.staticContent.push(fullChildItemPath);
       }
     }
 
+    // category is now mapped
     return category;
   }
 
@@ -118,7 +141,7 @@ export class ProjectContentMapper {
    * Straightforward. Maps a page marking everything on its directory as its static content.
    * @param page Page representation of a directory
    */
-  private static async mapPage(page: DirPage) {
+  private async mapPage(page: ContentNodePage) {
     const items = await this.readDir(page.path);
     for (const item of items) {
       if (item.name === Files.PAGE) continue;
@@ -138,14 +161,15 @@ export class ProjectContentMapper {
    * @param parentCategory Name of the parent category (ex: blog)
    * @returns A Content Directory representation object
    */
-  private static async mapDirectory(
+  private async mapDirectory(
     fullPath: string,
     dirName: string,
     parentCategory: string
-  ): Promise<DirItem | undefined> {
+  ): Promise<ContentNode | undefined> {
     const dirents = await this.readDir(fullPath);
     const [isPage, isCategory] = this.getDirStats(dirents);
     if (isPage && isCategory) throw new ConflictingContentTypeMismatchError(fullPath);
+
     if (isPage) {
       const page = this.createPage(fullPath);
       return this.mapPage(page);
@@ -156,16 +180,20 @@ export class ProjectContentMapper {
       return this.mapCategory(category);
     }
 
+    // static content
     return undefined;
   }
 
-  private static async readDir(dir: string) {
+  private async readDir(dir: string) {
     const dirents = await fs.readdir(dir, { withFileTypes: true });
 
     return dirents;
   }
 
-  private static getDirStats(dirents: Dirent<string>[]): [boolean, boolean] {
+  /**
+   * Gets whether a directory has index.md and category.md files
+   */
+  private getDirStats(dirents: Dirent<string>[]): [boolean, boolean] {
     let isPage = false;
     let isCategory = false;
     for (let item of dirents) {
@@ -177,23 +205,13 @@ export class ProjectContentMapper {
 
     return [isPage, isCategory];
   }
-}
 
-enum DirItemType {
-  Page,
-  Category,
-}
-
-interface DirItem {
-  type: DirItemType;
-  path: string;
-  staticContent: string[];
-}
-
-interface DirPage extends DirItem {}
-
-interface DirCategory extends DirItem {
-  name: string;
-  categories: DirCategory[];
-  pages: DirPage[];
+  /**
+   * Throws an error if static content is found in Content tree root of the project (root category)
+   * @param categoryName Category name to be verified if is root ("")
+   * @param illegalDirentPath dirent path of the illegal content
+   */
+  private throwIfInTreeRoot(categoryName: string, illegalDirentPath: string) {
+    if (categoryName === "") throw new IllegalContentTreeRootStaticContent(illegalDirentPath);
+  }
 }
