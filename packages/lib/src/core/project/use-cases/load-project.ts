@@ -6,6 +6,8 @@ import { Files } from "../../files";
 import { LoadTheme, StuartTheme } from "../../theme";
 import { ProjectConfigurationNotFoundError } from "../errors";
 import { ProjectConfigurationParser } from "../project-configuration-parser";
+import { ProjectContentTree } from "../project-content-mapper";
+import { ProjectContentMapper } from "../project-content-mapper/project-content-mapper";
 import { StuartProject } from "../stuart-project";
 import { ProjectData } from "../types";
 import { validateProjectConfiguration } from "../validations/validate-project-configuration";
@@ -16,6 +18,11 @@ import { validateProjectConfiguration } from "../validations/validate-project-co
 export class LoadProject {
   private constructor() {}
 
+  private static async mapContent(projectRoot: string): Promise<ProjectContentTree> {
+    projectRoot = path.dirname(projectRoot);
+    return new ProjectContentMapper(projectRoot).handle();
+  }
+
   /**
    * Loads a project located in the passed _projectRoot_ path.
    * Accepts either the directory or the stuartconf.yaml file path itself.
@@ -24,10 +31,7 @@ export class LoadProject {
    * @returns
    */
   public static async handle(projectRoot: string): Promise<StuartProject> {
-    if (!projectRoot.endsWith(Files.PROJECT_CONF)) {
-      projectRoot = path.join(projectRoot, Files.PROJECT_CONF);
-    }
-    projectRoot = path.resolve(projectRoot); // make path absolute
+    projectRoot = this.normalizeRootPath(projectRoot);
 
     this.assertConfigurationExistence(projectRoot);
     const rawProjectConfiguration = await fs.readFile(projectRoot, "utf-8");
@@ -40,8 +44,27 @@ export class LoadProject {
 
     const themes = await this.loadInstalledThemes(projectRoot);
 
-    return new StuartProject(projectRoot, projectData, themes);
+    const contentTree = await this.mapContent(projectRoot);
+
+    return new StuartProject(projectRoot, projectData, contentTree, themes);
   }
+
+  /**
+   * Normalizes a project root path by ensuring it ends with the project configuration file
+   * and converting it to an absolute path.
+   *
+   * @param projectRoot - The project root path to normalize, either absolute or relative
+   * @returns The normalized absolute path to the project configuration file
+   */
+  private static normalizeRootPath(projectRoot: string): string {
+    if (!projectRoot.endsWith(Files.PROJECT_CONF)) {
+      projectRoot = path.join(projectRoot, Files.PROJECT_CONF);
+    }
+
+    // make path absolute
+    return path.resolve(projectRoot);
+  }
+
   private static async loadInstalledThemes(projectRoot: string): Promise<StuartTheme[]> {
     // remove file from path and move inside themes folder
     projectRoot = path.join(path.dirname(projectRoot), Directories.THEMES);
