@@ -46,6 +46,7 @@ import {
 export class ProjectContentMapper {
   private readonly contentRoot: string;
   private readonly categoriesSet: ProjectContentCategoriesSet = {};
+  private readonly pages: ContentNodePage[] = [];
 
   public constructor(projectRoot: string) {
     if (!path.isAbsolute(projectRoot)) {
@@ -64,7 +65,7 @@ export class ProjectContentMapper {
     const rootCategory = this.createCategory("", this.contentRoot);
     const contentTree = await this.mapCategory(rootCategory);
 
-    return new ProjectContentTree(contentTree, this.categoriesSet);
+    return new ProjectContentTree(contentTree, this.pages.reverse(), this.categoriesSet);
   }
 
   /**
@@ -92,11 +93,16 @@ export class ProjectContentMapper {
    * @param path Root Path of the page
    */
   private createPage(path: string): ContentNodePage {
-    return {
+    const page: ContentNodePage = {
       type: ContentNodeType.Page,
       path,
+      category: "",
       staticContent: [],
     };
+
+    this.pages.push(page);
+
+    return page;
   }
 
   /**
@@ -116,7 +122,9 @@ export class ProjectContentMapper {
         const result = await this.mapDirectory(fullChildItemPath, item.name, category.name);
         switch (result?.type) {
           case ContentNodeType.Page:
-            category.pages.push(result as ContentNodePage);
+            const pageResult = result as ContentNodePage;
+            pageResult.category = category.name;
+            category.pages.push(pageResult);
             break;
           case ContentNodeType.Category:
             category.categories.push(result as ContentNodeCategory);

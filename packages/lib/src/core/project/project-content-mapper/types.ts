@@ -9,7 +9,9 @@ export interface ContentNode {
   staticContent: string[];
 }
 
-export interface ContentNodePage extends ContentNode {}
+export interface ContentNodePage extends ContentNode {
+  category: string;
+}
 
 export interface ContentNodeCategory extends ContentNode {
   name: string;

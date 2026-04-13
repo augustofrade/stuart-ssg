@@ -1,4 +1,4 @@
-import { ContentNodeCategory, ProjectContentCategoriesSet } from "./types";
+import { ContentNodeCategory, ContentNodePage, ProjectContentCategoriesSet } from "./types";
 
 /**
  * Represents the tree structure of the Content of a Stuart Project
@@ -11,6 +11,7 @@ export class ProjectContentTree {
 
   public constructor(
     private readonly contentTree: ContentNodeCategory,
+    public readonly pages: Readonly<ContentNodePage[]>,
     private readonly contentCategoriesSet: ProjectContentCategoriesSet
   ) {
     // remove root category from list
