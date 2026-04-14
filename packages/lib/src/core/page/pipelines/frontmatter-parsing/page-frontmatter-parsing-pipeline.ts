@@ -7,6 +7,12 @@ import {
   FrontmatterParsingPipelineResult,
 } from "./types";
 
+/**
+ * First sub-pipeline of the Page Building pipeline.
+ * Parses the raw page frontmatter.
+ *
+ * Returns the frontmatter and raw markdown.
+ */
 export class PageFrontMatterParsingPipeline extends PageBuildPipelineStep<
   BeforeFrontmatterParsingHook,
   AfterFrontmatterParsingHook
