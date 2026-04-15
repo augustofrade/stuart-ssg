@@ -10,3 +10,9 @@ export interface ProjectData<TProps = Record<string, ConfigurationValue>> {
   configuration: ProjectConfiguration;
   props: TProps;
 }
+
+export interface ProjectPaths {
+  publish: string;
+  content: string;
+  themes: string;
+}

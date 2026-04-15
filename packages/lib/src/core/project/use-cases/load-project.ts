@@ -46,7 +46,7 @@ export class LoadProject {
 
     const contentTree = await this.mapContent(projectRoot);
 
-    return new StuartProject(projectRoot, projectData, contentTree, themes);
+    return new StuartProject(path.dirname(projectRoot), projectData, contentTree, themes);
   }
 
   /**
