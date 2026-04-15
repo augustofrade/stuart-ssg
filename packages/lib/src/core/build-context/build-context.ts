@@ -43,6 +43,7 @@ export class BuildContext<TProps = Record<string, unknown>> {
       date: page.frontmatter.date,
       description: page.frontmatter.description,
       title: page.frontmatter.title,
+      path: page.node.path,
     };
   }
 
@@ -51,6 +52,8 @@ export class BuildContext<TProps = Record<string, unknown>> {
       author: project.data.configuration.author,
       name: project.data.configuration.name,
       props: structuredClone(project.data.props as TProps),
+      categories: structuredClone(project.content.categories),
+      path: project.root,
     };
   }
 

@@ -10,6 +10,10 @@ export interface ContextPageBuildParams {
 
 export interface ContextPageVars extends PageFrontmatter {
   category: string;
+  /**
+   * Path in the system of the Stuart Page Root / Declaration
+   */
+  path: Readonly<string>;
 }
 
 export interface ContextThemeVars {
@@ -21,5 +25,10 @@ export interface ContextThemeVars {
 }
 
 export interface ContextProjectVars<TProps> extends Omit<ProjectConfiguration, "theme"> {
+  /**
+   * Path in the system of the Stuart Project Root
+   */
+  path: Readonly<string>;
+  categories: Readonly<string[]>;
   props: TProps;
 }
