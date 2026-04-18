@@ -1,18 +1,22 @@
 import path from "path";
 import { BuildContext } from "../build-context";
 import { StuartProject } from "../project";
-import { getContextValue } from "./get-context-value";
+import { ContextValueAccessor } from "./context-value-accessor";
 import { Token } from "./token";
 import { ContentInterpolationValue } from "./types";
 
 const tokenRegex = /\{([^}]*)\}/g;
 
 export class ContentInterpolator {
+  private readonly contextValueAccessor: ContextValueAccessor;
+
   public constructor(
     private readonly content: string,
     private readonly buildContext: BuildContext,
     private readonly project: StuartProject
-  ) {}
+  ) {
+    this.contextValueAccessor = new ContextValueAccessor(buildContext);
+  }
 
   public handle(): string {
     return this.content.replace(tokenRegex, (_, value: string) => {
@@ -70,6 +74,6 @@ export class ContentInterpolator {
   }
 
   private handleContextPropertyAccess(query: string) {
-    return getContextValue(this.buildContext as Record<string, any>, query);
+    return this.contextValueAccessor.get(query);
   }
 }
