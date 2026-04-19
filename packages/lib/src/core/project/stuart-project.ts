@@ -15,6 +15,7 @@ export class StuartProject {
   ) {
     this.paths = {
       publish: path.join(this.root, Directories.PUBLISH),
+      publishedAssets: path.join(this.root, Directories.PUBLISH, "assets"),
       content: path.join(this.root, Directories.CONTENT),
       themes: path.join(this.root, Directories.THEMES),
     };

@@ -13,6 +13,7 @@ export interface ProjectData<TProps = Record<string, ConfigurationValue>> {
 
 export interface ProjectPaths {
   publish: string;
+  publishedAssets: string;
   content: string;
   themes: string;
 }
