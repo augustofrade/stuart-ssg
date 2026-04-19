@@ -1,4 +1,5 @@
 import { getTypeName } from "../../shared/get-type-name";
+import { BuildContext } from "../build-context";
 import { InvalidQueryError } from "./errors";
 import { ContentInterpolationValue } from "./types";
 
@@ -9,7 +10,7 @@ import { ContentInterpolationValue } from "./types";
  * - Transforms queried objects into JSON.
  */
 export class ContextValueAccessor {
-  public constructor(private readonly context: Record<string, any>) {}
+  public constructor(private readonly context: BuildContext) {}
 
   private static validValues = ["boolean", "date", "string", "number"];
 
@@ -63,14 +64,14 @@ export class ContextValueAccessor {
           const currentCtxMap = parts.slice(0, i).join(".");
           throw new InvalidQueryError(part!, currentCtxMap, query, propValueType);
         }
-        // requires type casting because typescript will think it is still Record<string, any>
+        // requires type casting because typescript will think it still is BuildContext / Record<string, any>
         // although it's actually a valid context property type.
-        return current as ContentInterpolationValue;
+        return current as unknown as ContentInterpolationValue;
       } else if (i === maxIterations) {
         return JSON.stringify(current);
       }
 
-      current = current[part!];
+      current = (current as any)[part!];
     }
 
     // the resulting property value will always be one that isn't in validValues,
