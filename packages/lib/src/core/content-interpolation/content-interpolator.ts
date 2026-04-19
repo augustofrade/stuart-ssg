@@ -2,6 +2,7 @@ import path from "path";
 import { BuildContext } from "../build-context";
 import { StuartProject } from "../project";
 import { ContextValueAccessor } from "./context-value-accessor";
+import { IllegalOutOfProjectScopeAccess, IllegalOutOfScopeAccess } from "./errors";
 import { Token } from "./token";
 import { ContentInterpolationValue } from "./types";
 
@@ -17,6 +18,9 @@ export class ContentInterpolator {
   ) {
     this.contextValueAccessor = new ContextValueAccessor(buildContext);
   }
+
+  private static scopedPathRegex = new RegExp(`^${Token.prefixes.scopedPath}`);
+  private static rootPathRegex = new RegExp(`^${Token.prefixes.rootPath}`);
 
   public handle(): string {
     return this.content.replace(tokenRegex, (_, value: string) => {
@@ -52,25 +56,47 @@ export class ContentInterpolator {
   }
 
   /**
-   * Transforms tokens of the RootPath type into their absolute publish path
+   * Transforms tokens of the RootPath type into their root publish path.
+   *
+   * @example
+   * ```markdown
+   * <project-root>/content/animals/dogs/my-dog
+   * This is a image in the root of the project of a dog: {~/image.jpg}
+   *
+   * <project-root>/publish/animals/dogs/my-dog
+   * This is a image in the root of the project of a dog: ../../../image.jpg
+   * ```
    */
   private handleRootPathToken(token: Token) {
-    return this.handleGenericPath(token, Token.prefixes.rootPath);
+    const absContentPath = this.project.getPublishPathForContent(this.buildContext.page.path);
+    const relativeAssetsPath = path.relative(absContentPath, this.project.paths.publishedAssets);
+
+    const illegalScopePath = `${Token.prefixes.rootPath}..`;
+
+    if (token.value.startsWith(illegalScopePath)) {
+      throw new IllegalOutOfProjectScopeAccess(token.value);
+    }
+
+    return token.value.replace(ContentInterpolator.rootPathRegex, relativeAssetsPath + "/");
   }
 
   /**
-   * Transforms tokens of the ScopedPath type into their absolute publish path
+   * Transforms tokens of the ScopedPath type into their relative publish path.
+   *
+   * @example
+   * ```markdown
+   * This is a content-scoped image: {@/image.jpg}
+   * This is a content-scoped image: ./image.jpg
+   * ```
    */
   private handleScopedPathToken(token: Token) {
-    return this.handleGenericPath(token, Token.prefixes.scopedPath);
-  }
+    const illegalScopePath = `${Token.prefixes.scopedPath}..`;
 
-  private handleGenericPath(token: Token, tokenPathPrefix: string) {
-    // publish path of the content must be used otherwise static files won't be referenced
-    const publishContentPath = this.project.getPublishPathForContent(this.buildContext.page.path);
-    const regex = new RegExp(`^${tokenPathPrefix}`);
-    const relativePath = token.value.replace(regex, "");
-    return path.join(publishContentPath, relativePath);
+    if (token.value.startsWith(illegalScopePath)) {
+      throw new IllegalOutOfScopeAccess(token.value);
+    }
+
+    return token.value.replace(ContentInterpolator.scopedPathRegex, "./");
   }
 
   private handleContextPropertyAccess(query: string) {
