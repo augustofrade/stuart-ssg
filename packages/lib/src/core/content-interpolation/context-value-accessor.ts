@@ -4,7 +4,8 @@ import { InvalidQueryError } from "./errors";
 import { ContentInterpolationValue } from "./types";
 
 /**
- * Provides an interface for accessing Build Context values through property queries.
+ * Provides an interface for accessing Build Context values through property string queries.
+ *
  * @notes
  * - Does not format Date objects into strings.
  * - Transforms queried objects into JSON.

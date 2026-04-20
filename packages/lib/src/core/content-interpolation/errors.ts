@@ -14,6 +14,7 @@ export class IllegalOutOfScopeAccess extends Error {
     super(
       `Illegal out of scope access found in value '${foundScopedPath}'. If you need to reference static project-wide paths, use the root path prefix '${Token.prefixes.rootPath}'`
     );
+    this.name = "IllegalOutOfScopeAccess";
   }
 }
 
@@ -22,5 +23,12 @@ export class IllegalOutOfProjectScopeAccess extends Error {
     super(
       `Illegal out of project scope access found in value '${foundScopedPath}'. Contents may not reference paths outside of the Stuart Project directory`
     );
+    this.name = "IllegalOutOfProjectScopeAccess";
+  }
+}
+
+export class InvalidContentInterpolationPipe extends Error {
+  constructor(pipe: string, interpolationValue: string) {
+    super(`Invalid '${pipe}' pipe found in '{${interpolationValue}}'`);
   }
 }

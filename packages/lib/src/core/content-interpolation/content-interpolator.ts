@@ -2,12 +2,18 @@ import path from "path";
 import { BuildContext } from "../build-context";
 import { StuartProject } from "../project";
 import { ContextValueAccessor } from "./context-value-accessor";
-import { IllegalOutOfProjectScopeAccess, IllegalOutOfScopeAccess } from "./errors";
+import {
+  IllegalOutOfProjectScopeAccess,
+  IllegalOutOfScopeAccess,
+  InvalidContentInterpolationPipe,
+} from "./errors";
+import { ContentInterpolationPipes } from "./pipes";
 import { Token } from "./token";
 import { ContentInterpolationValue } from "./types";
 
-const tokenRegex = /\{([^}]*)\}/g;
-
+/**
+ * Handles Content Interpolation of BuildContext values in string content
+ */
 export class ContentInterpolator {
   private readonly contextValueAccessor: ContextValueAccessor;
 
@@ -21,26 +27,51 @@ export class ContentInterpolator {
 
   private static scopedPathRegex = new RegExp(`^${Token.prefixes.scopedPath}`);
   private static rootPathRegex = new RegExp(`^${Token.prefixes.rootPath}`);
+  private static tokenRegex = /\{\s?([^}]*)\s?\}/g;
 
   public handle(): string {
-    return this.content.replace(tokenRegex, (_, value: string) => {
-      const token = new Token(value);
-      let contextValue: ContentInterpolationValue = "";
+    return this.content.replace(
+      ContentInterpolator.tokenRegex,
+      (_, rawInterpolationValue: string) => {
+        const value = rawInterpolationValue.trim();
 
-      if (token.isProject()) {
-        contextValue = this.handleProjectToken(token);
-      } else if (token.isTheme()) {
-        contextValue = this.handleThemeToken(token);
-      } else if (token.isRootPath()) {
-        contextValue = this.handleRootPathToken(token);
-      } else if (token.isScopedPath()) {
-        contextValue = this.handleScopedPathToken(token);
-      } else {
-        contextValue = this.handlePageToken(token);
+        const [tokenValue, pipe] = value.split(" | ");
+        const token = new Token(tokenValue ?? value);
+        let valueResult = this.handleToken(token)?.toString() ?? "";
+
+        if (pipe) {
+          return this.handlePipedValue(value, pipe, rawInterpolationValue);
+        }
+
+        return valueResult;
       }
+    );
+  }
 
-      return contextValue?.toString() ?? "";
-    });
+  private handleToken(token: Token): ContentInterpolationValue {
+    if (token.isProject()) {
+      return this.handleProjectToken(token);
+    } else if (token.isTheme()) {
+      return this.handleThemeToken(token);
+    } else if (token.isRootPath()) {
+      return this.handleRootPathToken(token);
+    } else if (token.isPage()) {
+      return this.handlePageToken(token);
+    } else if (token.isScopedPath()) {
+      return this.handleScopedPathToken(token);
+    } else if (token.isContentData()) {
+      return this.content;
+    }
+
+    return this.handleInvalidTokenWithFallback(token);
+  }
+
+  private handlePipedValue(value: string, pipe: string, rawInterpolationValue: string) {
+    const pipeCallback = ContentInterpolationPipes.get(pipe);
+    if (pipeCallback === undefined)
+      throw new InvalidContentInterpolationPipe(pipe, rawInterpolationValue);
+
+    return pipeCallback(value);
   }
 
   private handlePageToken(token: Token) {
@@ -56,14 +87,30 @@ export class ContentInterpolator {
   }
 
   /**
+   * Defaults the invalid token to the "page" type, prefixing its query.
+   *
+   * @example
+   * ```markdown
+   * Page name is {title}
+   *
+   * Gets translated to:
+   *
+   * Page name is {page.title}
+   * ```
+   */
+  private handleInvalidTokenWithFallback(token: Token) {
+    return this.handleContextPropertyAccess(`${Token.prefixes.page}${token.value}`);
+  }
+
+  /**
    * Transforms tokens of the RootPath type into their root publish path.
    *
    * @example
    * ```markdown
-   * <project-root>/content/animals/dogs/my-dog
+   * source: <project-root>/content/animals/dogs/my-dog
    * This is a image in the root of the project of a dog: {~/image.jpg}
    *
-   * <project-root>/publish/animals/dogs/my-dog
+   * result: <project-root>/publish/animals/dogs/my-dog
    * This is a image in the root of the project of a dog: ../../../image.jpg
    * ```
    */
@@ -99,6 +146,9 @@ export class ContentInterpolator {
     return token.value.replace(ContentInterpolator.scopedPathRegex, "./");
   }
 
+  /**
+   * Generic context query handler method
+   */
   private handleContextPropertyAccess(query: string) {
     return this.contextValueAccessor.get(query);
   }
