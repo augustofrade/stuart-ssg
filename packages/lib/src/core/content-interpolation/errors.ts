@@ -30,5 +30,6 @@ export class IllegalOutOfProjectScopeAccess extends Error {
 export class InvalidContentInterpolationPipe extends Error {
   constructor(pipe: string, interpolationValue: string) {
     super(`Invalid '${pipe}' pipe found in '{${interpolationValue}}'`);
+    this.name = "InvalidContentInterpolationPipe";
   }
 }
