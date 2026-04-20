@@ -10,10 +10,10 @@
   ],
   "compilerOptions": {
     "target": "es2020",
-    "module": "node16",
+    "module": "esnext",
     "sourceMap": true,
     "strict": true,
-    "moduleResolution": "node16",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": true,
@@ -25,6 +25,7 @@
     "skipLibCheck": true,
     "noEmitOnError": true,
     "moduleDetection": "force",
-    "removeComments": true
+    "removeComments": true,
+    "types": ["node"]
   }
 }
