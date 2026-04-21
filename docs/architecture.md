@@ -67,7 +67,7 @@ end
 subgraph "Page Token Injection"
 	TI_BEFORE@{ shape: rounded, label: "beforePageTokenInjection" }
 	TI@{ shape: rounded, label: "Page Token Injection" }
-	TI_RENDERED@{ shape: lean-r, label: "Rendered Page HTML" }
+	TI_FINAL@{ shape: lean-r, label: "Final Page Markdown" }
 	TI_AFTER@{ shape: rounded, label: "afterPageTokenInjection" }
 end
 
@@ -92,15 +92,15 @@ THEME_CONF-->CONTEXT_BUILD
 PROJECT_CONF-->CONTEXT_BUILD
 -->CONTEXT
 
+CONTEXT-->TI_BEFORE
+PAGE_CONTENT-->TI_BEFORE
+-->TI-->TI_FINAL-->TI_AFTER
+-->T_TI_BEFORE
 
 CONTEXT-->T_TI_BEFORE
 THEME_HTML-->T_TI_BEFORE
 -->T_TI
 T_TI-->T_TI_RENDERED-->T_TI_AFTER-->T_TI_FINAL
--->TI_BEFORE
-
-PAGE_CONTENT-->TI_BEFORE
--->TI-->TI_RENDERED-->TI_AFTER
 
 TI_AFTER-->RE_BEFORE
 T_TI_FINAL-->RE_BEFORE
