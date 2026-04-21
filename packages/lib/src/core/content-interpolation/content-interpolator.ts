@@ -40,7 +40,7 @@ export class ContentInterpolator {
         let valueResult = this.handleToken(token)?.toString() ?? "";
 
         if (pipe) {
-          return this.handlePipedValue(value, pipe, rawInterpolationValue);
+          return this.handlePipedValue(valueResult, pipe, rawInterpolationValue);
         }
 
         return valueResult;
