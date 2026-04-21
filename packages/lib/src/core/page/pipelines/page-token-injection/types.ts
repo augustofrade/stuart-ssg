@@ -1,7 +1,7 @@
 import { BuildContext } from "../../../build-context";
 
 /**
- * Allows changes to the markdown content of the Stuart Page before any token injection is made in it.
+ * Allows changes to the markdown content of the Stuart Page before any token injection is made to it.
  *
  * Expects a string, the markdown of the Stuart Page, to be returned.
  */

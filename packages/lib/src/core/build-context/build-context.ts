@@ -7,6 +7,13 @@ import {
   ContextThemeVars,
 } from "./types";
 
+/*
+TODO: implement proxy based change detection to reduce:
+- redundant theme token injection
+- more performatic BuildContextAccessor query searching
+with caching
+*/
+
 /**
  * Composition of different values of all parts required in order to build a Stuart Page:
  * - Page Frontmatter and additional data
