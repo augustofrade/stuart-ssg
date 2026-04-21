@@ -10,7 +10,7 @@ export class MarkdownParser {
     this.parser = marked;
   }
 
-  public parse(md: string) {
+  public parse(md: string): string {
     return this.parser(md);
   }
 }
