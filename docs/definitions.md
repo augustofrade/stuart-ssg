@@ -279,6 +279,12 @@ Available data sources are:
 - [`index.md`](#indexmd)
 - [`category.md`](#categorymd)
 
+The following files are apt to have content injected:
+
+- [`index.md`](#indexmd)
+- [`category.md](#categorymd)
+- [Stuart Theme template files](theming.md#templates)
+
 The following page markdown code uses the "name" property of the project:
 
 ```
@@ -297,3 +303,11 @@ And is converted to:
 ```markdown
 This is the first post of Awesome Project!
 ```
+
+### Scope Tokens
+
+Scope tokens are content interpolation tokens that reference their respective scope within the Project and/or the build process:
+
+- `@/`: [Content Static Files](#content-static-files)
+- `~/`: [Project Static Files](#project-static-files)
+- `#/`: [Theme Assets](theming.md#theme-assets)
