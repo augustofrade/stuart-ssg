@@ -101,4 +101,5 @@ Check the [definitions of Content Injection](definitions.md#content-interpolatio
 
 ## Build result
 
-When a Stuart Project gets built for publish,
+When a Stuart Project is built for publish, all its [HTML Templates](#templates) are used to build
+the Pages available under the Project Content Root and its [Theme Assets](#theme-assets) are moved to `<project-root>/publish/_theme/`.

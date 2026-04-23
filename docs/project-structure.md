@@ -78,7 +78,12 @@ Structure of a published Stuart Project
     page-1/
       index.html
 
+    _theme/
+      // Theme assets
+      styles.css
+
     static/
+      // Project static files
       image-1.jpg
   ...
 ```

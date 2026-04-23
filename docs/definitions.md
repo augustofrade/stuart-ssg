@@ -37,7 +37,7 @@ Contains only **[Stuart Pages](#page)** and **[Stuart Page Categories](#page-cat
 
 Themes are HTML files containing content interpolation keys for token injection to be used in a Stuart Project.
 
-Themes are, in essence, composed by a [`themeconf.yaml`](#themeconfyaml) file. This YAML file defiens the directory it is in as the **Theme Root**.
+Themes are, in essence, composed by a [`themeconf.yaml`](#themeconfyaml) file. This YAML file defines the directory it is in as the **Theme Root**.
 
 Projects can have any amount of installed themes; however, **use only one (1) theme at a time during development and build**.
 
