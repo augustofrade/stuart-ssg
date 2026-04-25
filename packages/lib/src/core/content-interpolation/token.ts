@@ -3,8 +3,9 @@ export class Token {
     project: "project.",
     page: "page.",
     theme: "theme.",
-    rootPath: "~/",
-    scopedPath: "@/",
+    rootPath: "@site/",
+    scopedPath: "@page/",
+    themeAssetsPath: "@theme/",
   });
 
   public constructor(public readonly value: string) {}

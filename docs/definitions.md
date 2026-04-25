@@ -54,13 +54,13 @@ Themes are located in the `themes/` directory of the project root:
 
 ### Project Static Files
 
-Static files that [Stuart Pages](#page) and [Stuart Page Categories](#page-category) have access, such as images, icons, documents etc.
+Project wide static files that [Stuart Pages](#page) and [Stuart Page Categories](#page-category) have access, such as images, icons, documents etc.
 
-Can be accessed in markdown syntax with `~/`:
+Can be accessed in markdown syntax with `@site/`:
 
 ```
 <page>/index.md
-The path to the author picture is {~/images/author.jpeg}
+The path to the author picture is {@site/images/author.jpeg}
 
 Result:
 publish/<page>/index.html
@@ -69,13 +69,13 @@ The path to the author picture is /static/images/author.jpeg
 
 ### Content Static Files
 
-Static files that only are accessible to the Content of the directory they are in
+Scope static files that only are accessible to the Content of the directory they are in
 
-Can be accessed in markdown syntax with `@/`:
+Can be accessed in markdown syntax with `@page/`:
 
 ```
 <page>/index.md
-The path to my dog's image is: {@/dog.jpeg}
+The path to my dog's image is: {@page/dog.jpeg}
 
 Result:
 publish/<page>/index.html
@@ -308,6 +308,6 @@ This is the first post of Awesome Project!
 
 Scope tokens are content interpolation tokens that reference their respective scope within the Project and/or the build process:
 
-- `@/`: [Content Static Files](#content-static-files)
-- `~/`: [Project Static Files](#project-static-files)
-- `#/`: [Theme Assets](theming.md#theme-assets)
+- `@page/`: [Content Static Files](#content-static-files)
+- `@site/`: [Project Static Files](#project-static-files)
+- `@theme/`: [Theme Assets](theming.md#theme-assets)

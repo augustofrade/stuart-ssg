@@ -63,10 +63,10 @@ For a template to be valid it:
 ## Theme Assets
 
 Static assets, such as images, must be placed under the `assets/` directory.
-They are available in the HTML template through the `#/` [content interpolation](#content-interpolation) token:
+They are available in the HTML template through the `@theme/` [content interpolation](#content-interpolation) token:
 
 ```html
-<img src="{#/heart.svg}" alt="Heart" />
+<img src="{@theme/heart.svg}" alt="Heart" />
 ```
 
 ## Content Interpolation
@@ -82,7 +82,7 @@ Thus, using the special `content` token injects the content of the current Page 
     <meta name="description" content="{project.description}" />
     <meta property="article:published_time" content="{page.date}" />
     <meta name="author" content="{project.author}" />
-    <link rel="stylesheet" href="{#/styles.css}" />
+    <link rel="stylesheet" href="{@theme/styles.css}" />
   </head>
   <body>
     <div>Published on {page.date | date}</div>
@@ -90,7 +90,7 @@ Thus, using the special `content` token injects the content of the current Page 
     <footer>
       <div>
         Made by
-        <a href="{theme.author.homepage}"><img src="{#/picture.jpg}" /> {theme.author.name}</a>
+        <a href="{theme.author.homepage}"><img src="{@theme/picture.jpg}" /> {theme.author.name}</a>
       </div>
     </footer>
   </body>

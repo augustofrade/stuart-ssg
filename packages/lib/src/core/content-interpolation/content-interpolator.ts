@@ -108,10 +108,10 @@ export class ContentInterpolator {
    * @example
    * ```markdown
    * source: <project-root>/content/animals/dogs/my-dog
-   * This is a image in the root of the project of a dog: {~/image.jpg}
+   * This is an image in the root of the project of a dog: {@site/image.jpg}
    *
    * result: <project-root>/publish/animals/dogs/my-dog
-   * This is a image in the root of the project of a dog: ../../../image.jpg
+   * This is an image in the root of the project of a dog: ../../../assets/image.jpg
    * ```
    */
   private handleRootPathToken(token: Token) {
@@ -132,7 +132,7 @@ export class ContentInterpolator {
    *
    * @example
    * ```markdown
-   * This is a content-scoped image: {@/image.jpg}
+   * This is a content-scoped image: {@page/image.jpg}
    * This is a content-scoped image: ./image.jpg
    * ```
    */
