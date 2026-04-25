@@ -6,7 +6,7 @@ import {
   InvalidContentInterpolationPipe,
   InvalidQueryError,
 } from "./errors";
-import { ContentInterpolationPipes } from "./pipes";
+import { ContentInterpolationPipes, registerBuiltInPipes } from "./pipes";
 import { Token } from "./token";
 import { ContentInterpolationValue } from "./types";
 
@@ -20,5 +20,6 @@ export {
   IllegalOutOfScopeAccess,
   InvalidContentInterpolationPipe,
   InvalidQueryError,
+  registerBuiltInPipes,
   Token,
 };
